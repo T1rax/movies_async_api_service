@@ -10,8 +10,7 @@ from modules.backoff import backoff
 from state import State, JsonFileStorage
 
 
-@backoff(elasticsearch.exceptions.ConnectionError)
-@backoff(psycopg2.OperationalError)
+@backoff()
 def etl(
     logger: logging.Logger,
     extractor: PostgresExtractor,

@@ -16,7 +16,7 @@ class ElasticsearchLoader:
         self.logger = logger
         self.create_index('movies')
 
-    @backoff((ConnectionError,))
+    @backoff()
     def create_index(self, index_name: str) -> None:
         with elasticsearch_conn(self.dsn) as es:
             if not es.ping():

@@ -6,8 +6,7 @@ from modules.logger import get_logger
 logger = get_logger(__name__)
 
 
-def backoff(exceptions,
-            start_sleep_time: float = 0.1,
+def backoff(start_sleep_time: float = 0.1,
             factor: int = 2,
             border_sleep_time: int = 10):
 
