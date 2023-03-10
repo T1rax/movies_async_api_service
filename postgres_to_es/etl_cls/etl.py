@@ -5,7 +5,7 @@ from etl_cls.extractor import PostgresExtractor
 from etl_cls.transformer import DataTransform
 from etl_cls.loader import ElasticsearchLoader
 from modules.backoff import backoff
-from state import State, JsonFileStorage
+from state import State
 
 
 @backoff()

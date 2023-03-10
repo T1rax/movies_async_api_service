@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Optional
 from pydantic import BaseModel, Field
 
 
@@ -15,7 +14,7 @@ class Person(BaseModel):
 
 class ElasticsearchData(BaseModel):
     id: str
-    imdb_rating: Optional[float]
+    imdb_rating: float | None
     genres: list[Genre]
     genre: list[str]
     title: str

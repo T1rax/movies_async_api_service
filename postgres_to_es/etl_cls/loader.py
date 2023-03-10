@@ -24,8 +24,8 @@ class ElasticsearchLoader:
 
             if not es.indices.exists(index='movies'):
                 es.indices.create(index=index_name, settings=settings, mappings=mappings)
-                self.logger.info(f"Create index {index_name} with:"
-                                 f"{json.dumps(settings, indent=2)} and {json.dumps(mappings, indent=2)} ")
+                self.logger.info(f'Create index {index_name} with:'
+                                 f'{json.dumps(settings, indent=2)} and {json.dumps(mappings, indent=2)}')
 
     def load(self, data: list[ElasticsearchData]) -> None:
         actions = [{'_index': 'movies', '_id': row.id, '_source': row.json()} for row in data]
