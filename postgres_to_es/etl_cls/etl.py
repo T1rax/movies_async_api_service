@@ -1,7 +1,5 @@
 from datetime import datetime
 import logging
-import psycopg2
-import elasticsearch
 
 from etl_cls.extractor import PostgresExtractor
 from etl_cls.transformer import DataTransform
