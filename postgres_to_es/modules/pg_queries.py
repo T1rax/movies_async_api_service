@@ -1,4 +1,4 @@
-query = '''
+movies_query = '''
 SELECT
    fw.id,
    fw.title,
@@ -34,4 +34,30 @@ LEFT JOIN content.genre g ON g.id = gfw.genre_id
 WHERE fw.updated_at > %s OR p.updated_at > %s OR g.updated_at > %s
 GROUP BY fw.id
 ORDER BY fw.updated_at DESC
+'''
+
+persons_query = '''
+SELECT
+    p.id,
+    p.full_name,
+    COALESCE (
+        json_agg(
+            DISTINCT jsonb_build_object(
+                'film_id', fw.id,
+                'film_title', fw.title,
+                'film_rating', fw.rating,
+                'film_roles', array_agg(pfw.role)
+            )
+        ) FILTER (WHERE fw.id is not null),
+        '[]'
+    ) AS films,
+    p.updated_at
+FROM content.person AS p
+LEFT JOIN content.person_film_work AS pfw 
+    ON pfw.person_id = p.id
+LEFT JOIN content.film_work AS fw
+    ON fw.id = pfw.film_work_id
+WHERE p.updated_at > %s
+GROUP BY p.id
+ORDER BY p.updated_at, p.id ASC
 '''

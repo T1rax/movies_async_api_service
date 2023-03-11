@@ -6,6 +6,7 @@ from etl_cls.transformer import DataTransform
 from etl_cls.loader import ElasticsearchLoader
 from modules.backoff import backoff
 from state import State
+from postgres_to_es.modules.pg_queries import movies_query, persons_query
 
 
 @backoff()
@@ -15,7 +16,7 @@ def etl(
     transformer: DataTransform,
     state: State,
     loader: ElasticsearchLoader,
-) -> None:
+    ) -> None:
     """Extracting, transforming and loading data"""
 
     start_timestamp = datetime.now()
@@ -23,7 +24,22 @@ def etl(
     logger.info(f"Last sync {modified}")
     params = modified or datetime.min
 
-    for extracted_part in extractor.extract(params):
-        data = transformer.transform(extracted_part)
-        loader.load(data)
-        state.set_state("modified", str(start_timestamp))
+    #films pipeline
+    for extracted_part in extractor.extract(params, movies_query):
+        movies_data = transformer.transform_to_movies(extracted_part)
+        loader.load('movies', movies_data)
+    
+    #clean memory
+    del movies_data
+
+
+    #persons pipeline
+    for extracted_part in extractor.extract(params, persons_query):
+        persons_data = transformer.transform_to_persons(extracted_part)
+        loader.load('persons', persons_data)
+
+    #clean memory
+    del persons_data
+
+    #if all indexes updated successfully - set new date state
+    state.set_state("modified", str(start_timestamp))

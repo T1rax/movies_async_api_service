@@ -24,15 +24,37 @@ def set_genres(row: list) -> list[str]:
     return genres
 
 
+def set_films(row: list) -> list[str]:
+    films = []
+    for film in row:
+        film_dict = dict()
+        film_dict['uuid'] = film['film_id']
+        film_dict['roles'] = film['film_roles']
+        films.append(film_dict)
+    return films
+
+
+def set_full_films(row: list) -> list[str]:
+    films = []
+    for film in row:
+        film_dict = dict()
+        film_dict['uuid'] = film['film_id']
+        film_dict['title'] = film['film_title']
+        film_dict['imdb_rating'] = film['film_rating']
+        film_dict['roles'] = film['film_roles']
+        films.append(film_dict)
+    return films
+
+
 class DataTransform:
     """Cls for transforming data from Postgres to pydantic"""
 
-    def transform(self, batch: list[dict]) -> list[ElasticsearchData]:
+    def transform_to_movies(self, batch: list[dict]) -> list[ElasticsearchData]:
 
         transformed_part = []
         for row in batch:
             transformed_row = ElasticsearchData(
-                id=row['id'],
+                uuid=row['id'],
                 imdb_rating=row['rating'],
                 genre=set_genres(row['genres']),
                 genres=row['genres'],
@@ -44,6 +66,22 @@ class DataTransform:
                 directors=set_persons(row, 'D'),
                 actors=set_persons(row, 'A'),
                 writers=set_persons(row, 'W'),
+                modified=row['updated_at']
+            )
+            transformed_part.append(transformed_row)
+        
+        return transformed_part
+    
+    
+    def transform_to_persons(self, batch: list[dict]) -> list[ElasticsearchData]:
+
+        transformed_part = []
+        for row in batch:
+            transformed_row = ElasticsearchData(
+                uuid=row['id'],
+                full_name=row['full_name'],
+                films=set_films(row['films']),
+                films_full=set_full_films(row['films']),
                 modified=row['updated_at']
             )
             transformed_part.append(transformed_row)

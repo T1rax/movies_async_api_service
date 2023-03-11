@@ -7,6 +7,7 @@ from etl_cls.transformer import DataTransform
 from etl_cls.loader import ElasticsearchLoader
 from modules.logger import get_logger
 from state import State, JsonFileStorage
+from postgres_to_es.modules.es_indexes import settings, movies_mappings, persons_mappings
 
 
 if __name__ == "__main__":
@@ -24,6 +25,10 @@ if __name__ == "__main__":
     )
     transformer = DataTransform()
     loader = ElasticsearchLoader(elastic_dsn=configs.elastic_dsn.hosts, logger=logger)
+
+    #Check for necessary indexes
+    loader.create_index('movies', settings, movies_mappings)
+    loader.create_index('persons', settings, persons_mappings)
 
     while True:
         etl(logger, extractor, transformer, state, loader)
