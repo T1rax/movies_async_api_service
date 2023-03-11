@@ -2,7 +2,6 @@ from datetime import datetime
 from typing import Iterator
 
 from modules.conn import postgres_conn
-from modules.movies_query import query
 
 
 class PostgresExtractor:
@@ -14,9 +13,9 @@ class PostgresExtractor:
         self.dsn = postgres_dsn
         self.logger = logger
 
-    def extract(self, modified: datetime) -> Iterator:
+    def extract(self, modified: datetime, pg_query: str) -> Iterator:
         with postgres_conn(self.dsn) as pg_conn, pg_conn.cursor() as cursor:
-            select_query = cursor.mogrify(query, (modified, ) * 3)
+            select_query = cursor.mogrify(pg_query, (modified, ) * 3)
             cursor.execute(select_query)
 
             while True:
@@ -24,6 +23,9 @@ class PostgresExtractor:
 
                 if not rows:
                     self.logger.info('No changes detected')
+                    cursor.close()
+                    pg_conn.close()
+                    self.logger.info('PG connection closed')
                     break
 
                 self.logger.info(f'Extracted {len(rows)} rows')
