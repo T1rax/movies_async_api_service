@@ -4,7 +4,7 @@ from config import ConfigMixin
 
 
 class Person(ConfigMixin):
-    """Person information in the list."""
+    """Model for persons"""
     uuid: str = Field(..., alias='id')
     full_name: str = Field(..., alias='name')
     roles: list[str]
@@ -12,6 +12,6 @@ class Person(ConfigMixin):
 
 
 class ElasticPerson(ConfigMixin):
-    """Person from ElasticSearch."""
+    """From Elasticserch"""
     uuid: str = Field(..., alias='id')
     full_name: str = Field(..., alias='name')
