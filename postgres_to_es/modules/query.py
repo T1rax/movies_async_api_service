@@ -1,4 +1,4 @@
-query = '''
+movies_query = '''
 SELECT
    fw.id,
    fw.title,
@@ -34,4 +34,15 @@ LEFT JOIN content.genre g ON g.id = gfw.genre_id
 WHERE fw.updated_at > %s OR p.updated_at > %s OR g.updated_at > %s
 GROUP BY fw.id
 ORDER BY fw.updated_at DESC
+'''
+
+genres_query = '''
+    SELECT
+        g.id,
+        g.name,
+        g.description,
+        g.updated_at
+    FROM content.genre g
+    WHERE g.updated_at > %s
+    ORDER BY g.updated_at
 '''

@@ -1,4 +1,4 @@
-from modules.pd_cls import ElasticsearchData
+from modules.pd_cls import ElasticsearchMovies, ElasticsearchGenres
 
 
 def set_names(row: dict, role: str) -> list[str]:
@@ -27,25 +27,41 @@ def set_genres(row: list) -> list[str]:
 class DataTransform:
     """Cls for transforming data from Postgres to pydantic"""
 
-    def transform(self, batch: list[dict]) -> list[ElasticsearchData]:
+    def __init__(self, index):
+        self.index_name = index
+
+    def transform(self, batch: list[dict]):
 
         transformed_part = []
-        for row in batch:
-            transformed_row = ElasticsearchData(
-                id=row['id'],
-                imdb_rating=row['rating'],
-                genre=set_genres(row['genres']),
-                genres=row['genres'],
-                title=row['title'],
-                description=row['description'],
-                director=set_names(row, 'D'),
-                actors_names=set_names(row, 'A'),
-                writers_names=set_names(row, 'W'),
-                directors=set_persons(row, 'D'),
-                actors=set_persons(row, 'A'),
-                writers=set_persons(row, 'W'),
-                modified=row['updated_at']
-            )
-            transformed_part.append(transformed_row)
+
+        match self.index_name:
+            case 'movies':
+                for row in batch:
+                    transformed_row = ElasticsearchMovies(
+                        id=row['id'],
+                        imdb_rating=row['rating'],
+                        genre=set_genres(row['genres']),
+                        genres=row['genres'],
+                        title=row['title'],
+                        description=row['description'],
+                        director=set_names(row, 'D'),
+                        actors_names=set_names(row, 'A'),
+                        writers_names=set_names(row, 'W'),
+                        directors=set_persons(row, 'D'),
+                        actors=set_persons(row, 'A'),
+                        writers=set_persons(row, 'W'),
+                        modified=row['updated_at']
+                    )
+                    transformed_part.append(transformed_row)
+            case 'genres':
+                for row in batch:
+                    transformed_row = ElasticsearchGenres(
+                        id=row['id'],
+                        name=row['name'],
+                        description=row['description']
+                    )
+                    transformed_part.append(transformed_row)
+            case _:
+                print('Index not found')
         
         return transformed_part
