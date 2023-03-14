@@ -12,7 +12,7 @@ class Person(BaseModel):
     name: str = Field(alias='person_name')
 
 
-class ElasticsearchData(BaseModel):
+class ElasticsearchMovies(BaseModel):
     id: str
     imdb_rating: float | None
     genres: list[Genre]
@@ -26,3 +26,9 @@ class ElasticsearchData(BaseModel):
     actors: list[Person]
     writers: list[Person]
     modified: datetime
+
+
+class ElasticsearchGenres(BaseModel):
+    id: str
+    name: str
+    description: str | None
