@@ -1,6 +1,6 @@
 from uuid import UUID
 from pydantic import Field
-from config import ConfigMixin
+from models.config import ConfigMixin
 
 
 class Person(ConfigMixin):

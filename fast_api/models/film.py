@@ -1,7 +1,7 @@
 from pydantic import Field
-from config import ConfigMixin
-from genre import ElasticGenre
-from person import ElasticPerson
+from models.config import ConfigMixin
+from models.genre import ElasticGenre
+from models.person import ElasticPerson
 
 
 class Film(ConfigMixin):

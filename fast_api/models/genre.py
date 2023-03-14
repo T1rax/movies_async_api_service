@@ -1,5 +1,5 @@
 from pydantic import Field
-from config import ConfigMixin
+from models.config import ConfigMixin
 
 
 class Genre(ConfigMixin):
