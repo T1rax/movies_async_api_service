@@ -34,6 +34,9 @@ if __name__ == "__main__":
     logger = get_logger(__name__)
     state_pool = [PoolInit(pool, configs, logger) for pool in data_pool]
 
+    for p in state_pool:
+        p.loader.create_index(p.pool.index)
+
     while True:
         for p in state_pool:
             etl(logger, p.extractor, p.transformer, p.state, p.loader)

@@ -14,7 +14,6 @@ class ElasticsearchLoader:
         self.logger = logger
         self.mappings = pool.mappings
         self.index = pool.index
-        self.create_index(self.index)
 
     @backoff()
     def create_index(self, index_name: str) -> None:

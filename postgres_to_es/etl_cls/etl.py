@@ -26,4 +26,5 @@ def etl(
     for extracted_part in extractor.extract(params):
         data = transformer.transform(extracted_part)
         loader.load(data)
-        state.set_state("modified", str(start_timestamp))
+        
+    state.set_state("modified", str(start_timestamp))
