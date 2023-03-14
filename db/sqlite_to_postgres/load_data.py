@@ -5,7 +5,7 @@ from psycopg2.extensions import connection as _connection
 import psycopg2
 import sqlite3
 from modules.sql import SqlExtractor
-from modules.pg import PostgresSaver
+from modules.pg import PostgresSaver, PostgresExtractor
 from modules.dataclasses import (
     Movie, Person, Genre,
     PersonFilmwork, GenreFilmwork,
@@ -57,13 +57,21 @@ def load_from_sqlite(connection: sqlite3.Connection, pg_conn: _connection):
     """Основной метод загрузки данных из SQLite в extractor.py"""
 
     postgres_saver = PostgresSaver(pg_conn)
+    postgres_extractor = PostgresExtractor(pg_conn)
     sqlite_extractor = SqlExtractor(connection)
 
     for row in tables:
         data_cls, table = row
+
+        # Check if table already has data
+        if postgres_extractor.is_table_not_empty(table):
+            print("Table %s already has data" % (table))
+            continue
+
+        print("Transfer data from SQLite to PG for table - %s" % (table))
         for data in sqlite_extractor.get_data(data_cls, table):
-            print(table)
             postgres_saver.save_data(data, data_cls, table)
+        print("Data transfered - %s" % (table))
 
 
 if __name__ == '__main__':

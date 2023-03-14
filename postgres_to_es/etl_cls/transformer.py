@@ -1,4 +1,4 @@
-from modules.pd_cls import ElasticsearchMovies, ElasticsearchGenres
+from modules.pd_cls import ElasticsearchMovies, ElasticsearchGenres, ElasticsearchPersons
 
 
 def set_names(row: dict, role: str) -> list[str]:
@@ -23,6 +23,16 @@ def set_genres(row: list) -> list[str]:
         genres.append(genre['genre_name'])
     return genres
 
+def set_films(row: list) -> list[str]:
+    films = []
+    for film in row:
+        film_dict = dict()
+        film_dict['film_id'] = film['film_id']
+        film_dict['film_title'] = film['film_title']
+        film_dict['film_rating'] = film['film_rating']
+        film_dict['film_roles'] = film['film_roles']
+        films.append(film_dict)
+    return films
 
 class DataTransform:
     """Cls for transforming data from Postgres to pydantic"""
@@ -35,6 +45,7 @@ class DataTransform:
         transformed_part = []
 
         match self.index_name:
+            
             case 'movies':
                 for row in batch:
                     transformed_row = ElasticsearchMovies(
@@ -53,6 +64,7 @@ class DataTransform:
                         modified=row['updated_at']
                     )
                     transformed_part.append(transformed_row)
+            
             case 'genres':
                 for row in batch:
                     transformed_row = ElasticsearchGenres(
@@ -61,6 +73,17 @@ class DataTransform:
                         description=row['description']
                     )
                     transformed_part.append(transformed_row)
+            
+            case 'persons':
+                for row in batch:
+                    transformed_row = ElasticsearchPersons(
+                        id=row['id'],
+                        full_name=row['full_name'],
+                        films=set_films(row['films']),
+                        modified=row['updated_at']
+                    )
+                    transformed_part.append(transformed_row)
+
             case _:
                 print('Index not found')
         

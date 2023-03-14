@@ -21,10 +21,10 @@ class PoolInit:
             logger=logger,
             index=pool.index,
             query=pool.query
-        )
+            )
         self.transformer = DataTransform(
             index=pool.index
-        )
+            )
         self.loader = ElasticsearchLoader(elastic_dsn=configs.elastic_dsn.hosts, logger=logger, pool=pool)
 
 

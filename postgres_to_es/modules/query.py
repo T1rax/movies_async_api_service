@@ -46,3 +46,39 @@ genres_query = '''
     WHERE g.updated_at > %s
     ORDER BY g.updated_at
 '''
+
+persons_query = '''
+    WITH film_roles as (
+        SELECT
+            fw.id
+            , fw.title
+            , fw.rating
+            , array_agg(pfw.role) as roles
+            , pfw.person_id
+        FROM content.film_work AS fw
+        LEFT JOIN content.person_film_work AS pfw
+            ON fw.id = pfw.film_work_id
+        GROUP BY fw.id, pfw.person_id
+    )
+    SELECT
+        p.id,
+        p.full_name,
+        COALESCE (
+            json_agg(
+                DISTINCT jsonb_build_object(
+                    'film_id', fr.id,
+                    'film_title', fr.title,
+                    'film_rating', fr.rating,
+                    'film_roles', fr.roles
+                )
+            ) FILTER (WHERE fr.id is not null),
+            '[]'
+        ) AS films,
+        p.updated_at
+    FROM content.person AS p
+    LEFT JOIN film_roles AS fr
+        ON fr.person_id = p.id
+    WHERE p.updated_at > %s
+    GROUP BY p.id
+    ORDER BY p.updated_at, p.id ASC
+'''
