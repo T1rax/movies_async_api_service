@@ -39,7 +39,7 @@ settings = {
             }
         }
 
-mappings = {
+mappings_movies = {
             "dynamic": "strict",
             "properties": {
                 "id": {
@@ -133,3 +133,20 @@ mappings = {
                 }
             },
 }
+
+mappings_genres = {
+            "dynamic": "strict",
+            "properties": {
+                "id": {
+                    "type": "keyword"
+                },
+                "name": {
+                    "type": "text",
+                    "analyzer": "ru_en"
+                },
+                "description": {
+                    "type": "text",
+                    "analyzer": "ru_en"
+                },
+              }
+            }
