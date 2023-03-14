@@ -37,9 +37,21 @@ class PostgresSaver:
 
     def save_data(self, data: list, cls, table: str, batch_size: int = 25):
         with self.pg_conn.cursor() as cursor:
-            print(table)
             cmd = f'INSERT INTO content.{table} ({get_names(cls)}) ' \
                   f'VALUES ({set_number(cls)}) ON CONFLICT (id) DO NOTHING;'
             imp = [astuple(make_one_letter(row)) for row in data]
             execute_batch(cursor, cmd, imp, page_size=batch_size)
             self.pg_conn.commit()
+
+
+class PostgresExtractor:
+    def __init__(self, pg_conn):
+        self.pg_conn = pg_conn
+
+    def is_table_not_empty(self, table: str):
+        with self.pg_conn.cursor() as cursor:
+            cursor.execute(f'SELECT * FROM content.{table};')
+            if cursor.rowcount > 0:
+                return True
+            else:
+                return False

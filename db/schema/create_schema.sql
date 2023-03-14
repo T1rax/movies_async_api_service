@@ -12,13 +12,6 @@ CREATE TABLE IF NOT EXISTS content.film_work (
     updated_at timestamp with time zone
 );
 
--- INSERT INTO content.film_work (id, title, type, creation_date, rating) SELECT uuid_generate_v4(), 'some name', case when RANDOM() < 0.3 THEN 'movie' ELSE 'tv_show' END , date::DATE, floor(random() * 100)
--- FROM generate_series(
---   '1900-01-01'::DATE,
---   '2021-01-01'::DATE,
---   '1 hour'::interval
--- ) date;
-
 CREATE TABLE IF NOT EXISTS content.person (
     id uuid PRIMARY KEY,
     full_name TEXT NOT NULL,
