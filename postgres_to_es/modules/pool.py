@@ -1,6 +1,6 @@
 from collections import namedtuple
-from modules.query import movies_query, genres_query
-from modules.index import mappings_movies, mappings_genres
+from modules.query import movies_query, genres_query, persons_query
+from modules.index import mappings_movies, mappings_genres, mappings_persons
 
 
 QueryIndex = namedtuple('QueryIndex', ['index', 'mappings', 'query', 'file'])
@@ -19,4 +19,11 @@ genres = QueryIndex(
     'genres.json'
 )
 
-data_pool = [movies, genres]
+persons = QueryIndex(
+    'persons',
+    mappings_persons,
+    persons_query,
+    'persons.json'
+)
+
+data_pool = [movies, genres, persons]

@@ -150,3 +150,44 @@ mappings_genres = {
                 },
               }
             }
+
+mappings_persons = {
+            "dynamic": "strict",
+            "properties": {
+                "id": {
+                "type": "keyword"
+                },
+                "full_name": {
+                  "type": "text",
+                  "analyzer": "ru_en"
+                },
+                "films": {
+                  "type": "nested",
+                  "dynamic": "strict",
+                  "properties": {
+                    "id": {
+                      "type": "keyword"
+                    },
+                    "roles": {
+                      "type": "text",
+                      "analyzer": "ru_en"
+                    },
+                    "imdb_rating": {
+                      "type": "float"
+                    },
+                    "title": {
+                      "type": "text",
+                      "analyzer": "ru_en",
+                      "fields": {
+                        "raw": {
+                          "type":  "keyword"
+                        }
+                      }
+                    }
+                  }
+                },
+                "modified": {
+                "type": "date"
+                }
+            },
+}
