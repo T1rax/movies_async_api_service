@@ -17,12 +17,12 @@ class GenreService:
         self.elastic = elastic
 
     async def get_by_id(self, genre_id: str) -> Genre | None:
-        genre = await self._genre_from_cache(genre_id)
+        genre = None #await self._genre_from_cache(genre_id)
         if not genre:
             genre = await self._get_genre_from_elastic(genre_id)
             if not genre:
                 return None
-            await self._put_genre_to_cache(genre)
+            #await self._put_genre_to_cache(genre)
 
         return genre
 
