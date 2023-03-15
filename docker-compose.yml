@@ -1,6 +1,6 @@
-version: '3'
-
+version: '3.4'
 services:
+
   postgres:
     image: postgres:alpine
     volumes:
@@ -26,7 +26,7 @@ services:
     volumes:
       - elasticsearch_data:/opt/elasticsearch/data
     ports:
-      - "9200:9200"
+      - '9200:9200'
     env_file:
       - ./.env
     depends_on:
@@ -40,6 +40,24 @@ services:
     depends_on:
       - elasticsearch
       - postgres
+
+  fastapi:
+    build: ./fast_api
+    restart: always
+    env_file:
+      - ./.env
+    environment:
+      - API_REDIS_HOST=redis
+    ports:
+      - '8000:8000'
+    depends_on:
+      - elasticsearch
+      - redis
+
+  redis:
+    image: redis:7.0.9-alpine
+    ports:
+      - '6379:6379'
 
 volumes:
   postgres_data:
