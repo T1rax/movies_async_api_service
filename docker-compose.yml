@@ -22,6 +22,7 @@ services:
     restart: always
     environment:
       - xpack.security.enabled=false
+      - 'ES_JAVA_OPTS=-Xms1000m -Xmx1000m'
       - discovery.type=single-node
     volumes:
       - elasticsearch_data:/opt/elasticsearch/data
@@ -50,9 +51,9 @@ services:
       - API_REDIS_HOST=redis
     ports:
       - '8000:8000'
-    depends_on:
-      - elasticsearch
-      - redis
+    # depends_on:
+    #   - elasticsearch
+    #   - redis
 
   redis:
     image: redis:7.0.9-alpine
