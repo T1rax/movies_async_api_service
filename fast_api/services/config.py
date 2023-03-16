@@ -9,7 +9,7 @@ class FilmHelper:
         self.es_query = None
         self.es_sort = None
     
-    def _set_class_attr(self, func_name = None, query = None, q = None, sort = None, page_number = None, page_size = None):
+    def _set_class_attr(self, func_name = None, q = None, sort = None, page_number = None, page_size = None):
         self.func_name = func_name
         self.q = q
         self.sort = sort
@@ -18,7 +18,7 @@ class FilmHelper:
 
     def _generate_redis_key(self):
         redis_key = '___'.join(filter(None, map(str, 
-            ['movies', self.func_name, self.query, self.q, self.sort, self.page_number, self.page_size]
+            ['movies', self.func_name, self.genre_id, self.q, self.sort, self.page_number, self.page_size]
         )))
         return redis_key
     

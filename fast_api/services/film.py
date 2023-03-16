@@ -16,6 +16,7 @@ FILM_CACHE_EXPIRE_IN_SECONDS = 60 * 5  # 5 минут
 
 class FilmService(FilmHelper):
     def __init__(self, redis: Redis, elastic: AsyncElasticsearch):
+        FilmHelper.__init__(self)
         self.redis = redis
         self.elastic = elastic
     
