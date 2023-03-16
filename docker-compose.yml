@@ -51,9 +51,9 @@ services:
       - API_REDIS_HOST=redis
     ports:
       - '8000:8000'
-    # depends_on:
-    #   - elasticsearch
-    #   - redis
+    depends_on:
+      - elasticsearch
+      - redis
 
   redis:
     image: redis:7.0.9-alpine

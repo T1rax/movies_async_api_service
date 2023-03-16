@@ -14,8 +14,6 @@ from services.config import FilmHelper
 
 FILM_CACHE_EXPIRE_IN_SECONDS = 60 * 5  # 5 минут
 
-logging.getLogger().setLevel(logging.INFO)
-
 class FilmService(FilmHelper):
     def __init__(self, redis: Redis, elastic: AsyncElasticsearch):
         self.redis = redis
