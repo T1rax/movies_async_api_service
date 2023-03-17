@@ -19,7 +19,6 @@ class GenreService:
     async def get_by_id(self, genre_id: str) -> Genre | None:
         genre = await self._genre_from_cache(genre_id)
         if not genre:
-            print("Looked in Elastic")
             genre = await self._get_genre_from_elastic(genre_id)
             if not genre:
                 return None
@@ -27,12 +26,34 @@ class GenreService:
 
         return genre
 
+    async def get_genres(self) -> list[Genre] | None:
+        genres = None
+        if not genres:
+            genres = await self._get_genres_from_elastic()
+            if not genres:
+                return None
+        return genres
+
     async def _get_genre_from_elastic(self, genre_id: str) -> Genre | None:
         try:
             doc = await self.elastic.get('genres', genre_id)
         except NotFoundError:
             return None
         return Genre(**doc['_source'])
+
+    async def _get_genres_from_elastic(self) -> list[Genre]:
+        try:
+            query = {'query': {"match_all": {}}}
+            doc = await self.elastic.search(index='genres',
+                                            body=query,
+                                            )
+        except NotFoundError:
+            return None
+
+        data = list()
+        for item in doc['hits']['hits']:
+            data.append(Genre(**item['_source']))
+        return data
 
     async def _genre_from_cache(self, genre_id: str) -> Genre | None:
         data = await self.redis.get(genre_id)

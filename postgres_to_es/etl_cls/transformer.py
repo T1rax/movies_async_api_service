@@ -55,12 +55,12 @@ class DataTransform:
                         genres=row['genres'],
                         title=row['title'],
                         description=row['description'],
-                        director=set_names(row, 'D'),
-                        actors_names=set_names(row, 'A'),
-                        writers_names=set_names(row, 'W'),
-                        directors=set_persons(row, 'D'),
-                        actors=set_persons(row, 'A'),
-                        writers=set_persons(row, 'W'),
+                        director=set_names(row, 'director'),
+                        actors_names=set_names(row, 'actor'),
+                        writers_names=set_names(row, 'writer'),
+                        directors=set_persons(row, 'director'),
+                        actors=set_persons(row, 'actor'),
+                        writers=set_persons(row, 'writer'),
                         modified=row['updated_at']
                     )
                     transformed_part.append(transformed_row)
