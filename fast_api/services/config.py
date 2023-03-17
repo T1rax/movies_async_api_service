@@ -59,16 +59,17 @@ class PersonHelper:
     def __init__(self):
         self.func_name = None
         self.q = None
-        self.sort = None
         self.page_number = None
         self.page_size = None
-        self.genre_id = None
-        self.es_query = None
-        self.es_sort = None
 
     def _set_class_attr(self, func_name=None, q=None, sort=None, page_number=None, page_size=None):
         self.func_name = func_name
         self.q = q
-        self.sort = sort
         self.page_number = page_number
         self.page_size = page_size
+
+    def _generate_redis_key(self):
+        redis_key = '___'.join(filter(None, map(str,
+            ['person', self.func_name, self.q, self.page_number, self.page_size]
+        )))
+        return redis_key

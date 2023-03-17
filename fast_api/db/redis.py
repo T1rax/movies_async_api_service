@@ -1,9 +1,10 @@
+from core import config
 from redis.asyncio import Redis
 
-# Функция понадобится при внедрении зависимостей
+
 async def get_redis() -> Redis:
     try:
-        redis = Redis(host='redis', port=6379)
+        redis = Redis(host=config.REDIS_HOST, port=config.REDIS_PORT)
         return redis
     except:
         return None
