@@ -11,8 +11,8 @@ from db.elastic import get_elastic
 from db.redis import get_redis
 from models.film import Film
 from services.config import FilmHelper
+from core.config import RedisConfig
 
-FILM_CACHE_EXPIRE_IN_SECONDS = 60 * 5  # 5 минут
 
 class FilmService(FilmHelper):
     def __init__(self, redis: Redis, elastic: AsyncElasticsearch):
@@ -39,22 +39,25 @@ class FilmService(FilmHelper):
         return Film(**doc['_source'])
 
     async def _film_from_cache(self, film_id: str) -> Optional[Film]:
-        data = await self.redis.get(film_id)
+        data = await self.redis.get(f'film__{film_id}')
         if not data:
             return None
-
+        logging.info('Redis key to read %s', f'film__{film_id}')
         film = Film.parse_raw(data)
         return film
 
     async def _put_film_to_cache(self, film: Film):
-        await self.redis.set(film.uuid, film.json(), FILM_CACHE_EXPIRE_IN_SECONDS)
+        logging.info('Redis key to write %s', f'film__{film.uuid}')
+        await self.redis.set(
+            f'film__{film.uuid}',
+            film.json(),
+            RedisConfig().REDIS_CACHE)
         
     #All films on path /
     async def get_all_films(self, sort: str, genre: str, page_number: int, page_size: int) -> Optional[Film]:
         self._set_class_attr(func_name='all_films', sort=sort, page_number=page_number, page_size=page_size)
         self._generate_genre_query(genre)
         self._convert_sort_field(sort)
-            
 
         films = await self._search_from_cache()
         if not films:
@@ -116,7 +119,7 @@ class FilmService(FilmHelper):
         for film in films:
             redis_list.append(film.json())
 
-        await self.redis.set(redis_key, json.dumps(redis_list), FILM_CACHE_EXPIRE_IN_SECONDS)
+        await self.redis.set(redis_key, json.dumps(redis_list), RedisConfig().REDIS_CACHE)
 
 
 @lru_cache()

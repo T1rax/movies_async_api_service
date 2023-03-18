@@ -9,7 +9,7 @@ from redis.asyncio import Redis
 from db.elastic import get_elastic
 from db.redis import get_redis
 from models.genre import Genre
-from core import config
+from core.config import RedisConfig
 
 
 class GenreService:
@@ -47,8 +47,7 @@ class GenreService:
         try:
             query = {'query': {"match_all": {}}}
             doc = await self.elastic.search(index='genres',
-                                            body=query,
-                                            )
+                                            body=query)
         except NotFoundError:
             return None
 
@@ -78,12 +77,14 @@ class GenreService:
         await self.redis.set(
             'get_genres_films',
             orjson.dumps([genre.json(by_alias=True) for genre in genres]),
-            config.REDIS_CACHE
-        )
+            RedisConfig().REDIS_CACHE)
 
     async def _put_genre_to_cache(self, genre: Genre) -> None:
         logging.info('Redis key to write %s', f'genre_uuid_{genre.uuid}')
-        await self.redis.set(f'genre_uuid_{genre.uuid}', genre.json(), config.REDIS_CACHE)
+        await self.redis.set(
+            f'genre_uuid_{genre.uuid}',
+            genre.json(),
+            RedisConfig().REDIS_CACHE)
 
 
 @lru_cache()
