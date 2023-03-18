@@ -1,15 +1,13 @@
-import logging
-
-import uvicorn
 from elasticsearch import AsyncElasticsearch
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from redis.asyncio import Redis
 
 from api.v1.router import router
-from core import config
+from core.config import RedisConfig, ElasticConfig
 from core.logger import LOGGING
 from db import elastic, redis
+
 
 app = FastAPI(
     title="Read-only API для онлайн-кинотеатра",
@@ -23,8 +21,8 @@ app = FastAPI(
 
 @app.on_event('startup')
 async def startup():
-    redis.redis = Redis(host=config.REDIS_HOST, port=config.REDIS_PORT)
-    elastic.es = AsyncElasticsearch(hosts=[f'{config.ELASTIC_HOST}:{config.ELASTIC_PORT}'])
+    redis.redis = Redis(host=RedisConfig().REDIS_HOST, port=RedisConfig().REDIS_PORT)
+    elastic.es = AsyncElasticsearch(hosts=[f'{ElasticConfig().ELASTIC_HOST}:{ElasticConfig().ELASTIC_PORT}'])
 
 
 @app.on_event('shutdown')
@@ -34,13 +32,3 @@ async def shutdown():
 
 
 app.include_router(router, prefix='/api/v1')
-
-
-if __name__ == '__main__':
-    uvicorn.run(
-        'main:app',
-        host='0.0.0.0',
-        port=8000,
-        log_config=LOGGING,
-        log_level=logging.INFO,
-    )
