@@ -1,4 +1,5 @@
 redis==4.5.1
+fastapi-cache2==0.2.1
 elasticsearch[async]==7.9.1
 fastapi==0.94.1
 orjson==3.8.7

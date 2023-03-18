@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from redis.asyncio import Redis
 
-from api.v1 import films, genres
+from api.v1.router import router
 from core import config
 from core.logger import LOGGING
 from db import elastic, redis
@@ -33,8 +33,7 @@ async def shutdown():
     await elastic.es.close()
 
 
-app.include_router(films.router, prefix='/api/v1/films', tags=['films'])
-app.include_router(genres.router, prefix='/api/v1/genres', tags=['genres'])
+app.include_router(router, prefix='/api/v1')
 
 
 if __name__ == '__main__':

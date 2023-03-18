@@ -39,7 +39,7 @@ class PostgresSaver:
         with self.pg_conn.cursor() as cursor:
             cmd = f'INSERT INTO content.{table} ({get_names(cls)}) ' \
                   f'VALUES ({set_number(cls)}) ON CONFLICT (id) DO NOTHING;'
-            imp = [astuple(make_one_letter(row)) for row in data]
+            imp = [astuple(row) for row in data]
             execute_batch(cursor, cmd, imp, page_size=batch_size)
             self.pg_conn.commit()
 
