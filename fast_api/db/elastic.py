@@ -1,7 +1,6 @@
 from elasticsearch import AsyncElasticsearch
 
-es: AsyncElasticsearch | None
-
 
 async def get_elastic() -> AsyncElasticsearch:
+    es: AsyncElasticsearch | None
     return es
