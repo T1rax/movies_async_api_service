@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from models.person import Person, PersonFilmList
 from services.person import PersonService, get_person_service
 
@@ -11,8 +11,8 @@ router = APIRouter()
             response_model=list[Person],
             description="Search for the person")
 async def person_search(query: str | None = None,
-                        page_number: int | None = 1,
-                        page_size: int | None = 50,
+                        page_number: int = Query(default=1, gt=0, le=100),
+                        page_size: int = Query(default=50, gt=0, le=100),
                         person_service: PersonService = Depends(get_person_service)
                         ) -> Person:
     persons = await person_service.get_by_search(q=query,
