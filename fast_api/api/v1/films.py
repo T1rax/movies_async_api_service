@@ -3,10 +3,14 @@ from fastapi import APIRouter, Depends, HTTPException
 from models.film import Film
 from services.film import FilmService, get_film_service
 
+
 router = APIRouter()
 
+
 # Внедряем FilmService с помощью Depends(get_film_service)
-@router.get('/', response_model=list[Film])
+@router.get('/',
+            response_model=list[Film],
+            description='Show information about all films')
 async def film_query(sort: str | None = None,
                      genre: str | None = None,
                      page_number: int | None  = 1, 
@@ -18,10 +22,12 @@ async def film_query(sort: str | None = None,
     return films
 
 
-@router.get('/search', response_model=list[Film])
-async def film_search(query: str | None  = None, 
-                      page_number: int | None  = 1, 
-                      page_size: int | None  = 50, 
+@router.get('/search',
+            response_model=list[Film],
+            description='Search for the film')
+async def film_search(query: str | None = None,
+                      page_number: int | None = 1,
+                      page_size: int | None = 50,
                       film_service: FilmService = Depends(get_film_service)) -> Film:
     films = await film_service.get_by_search(q=query, page_number=page_number, page_size=page_size)
     if not films:
@@ -29,7 +35,9 @@ async def film_search(query: str | None  = None,
     return films
 
 
-@router.get('/{film_id}', response_model=Film)
+@router.get('/{film_id}',
+            response_model=Film,
+            description='Show information about the film')
 async def film_details(film_id: str, film_service: FilmService = Depends(get_film_service)) -> Film:
     film = await film_service.get_by_id(film_id)
     if not film:
