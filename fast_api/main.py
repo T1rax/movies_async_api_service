@@ -1,6 +1,3 @@
-import logging
-
-import uvicorn
 from elasticsearch import AsyncElasticsearch
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
@@ -35,13 +32,3 @@ async def shutdown():
 
 
 app.include_router(router, prefix='/api/v1')
-
-
-if __name__ == '__main__':
-    uvicorn.run(
-        'main:app',
-        host='0.0.0.0',
-        port=8000,
-        log_config=LOGGING,
-        log_level=logging.INFO
-    )
