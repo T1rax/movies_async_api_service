@@ -66,10 +66,10 @@ class GenreService:
         return genres
 
     async def _genre_from_cache(self, genre_id: str) -> Genre | None:
-        data = await self.redis.get(genre_id)
+        data = await self.redis.get(f'genre_uuid_{genre_id}')
         if not data:
             return None
-        logging.info('Redis key to read %s', genre_id)
+        logging.info('Redis key to read %s', f'genre_uuid_{genre_id}')
         genre = Genre.parse_raw(data)
         return genre
 
@@ -82,8 +82,8 @@ class GenreService:
         )
 
     async def _put_genre_to_cache(self, genre: Genre) -> None:
-        logging.info('Redis key to write %s', genre.uuid)
-        await self.redis.set(genre.uuid, genre.json(), config.REDIS_CACHE)
+        logging.info('Redis key to write %s', f'genre_uuid_{genre.uuid}')
+        await self.redis.set(f'genre_uuid_{genre.uuid}', genre.json(), config.REDIS_CACHE)
 
 
 @lru_cache()

@@ -96,18 +96,18 @@ class PersonService(PersonHelper):
         return persons
 
     async def _person_from_cache(self, person_id: str) -> Person | None:
-        data = await self.redis.get(person_id)
-        logging.info('Redis key to read %s', person_id)
+        data = await self.redis.get(f'detailed_person__{person_id}')
+        logging.info('Redis key to read %s', f'detailed_person__{person_id}')
         if not data:
             return None
         person = Person.parse_raw(data)
         return person
 
     async def _persons_from_cache(self, key: str) -> list[PersonFilmList] | None:
-        data = await self.redis.get('get_persons_films__' + key)
+        data = await self.redis.get(f'persons_films__{key}')
         if not data:
             return
-        logging.info('Redis key to read %s', key)
+        logging.info('Redis key to read %s', f'persons_films__{key}')
         persons = [PersonFilmList.parse_raw(item) for item in orjson.loads(data)]
         return persons
 
@@ -121,16 +121,17 @@ class PersonService(PersonHelper):
         await self.redis.set(redis_key, json.dumps(redis_list), config.REDIS_CACHE)
 
     async def _put_person_to_cache(self, person: PersonFilmList) -> None:
-        logging.info('Redis key to write %s', person.uuid)
+        logging.info('Redis key to write %s', f'detailed_person__{person.uuid}')
         await self.redis.set(
-            person.uuid, person.json(),
+            f'detailed_person__{person.uuid}',
+            person.json(),
             config.REDIS_CACHE,
         )
 
     async def _put_persons_to_cache(self, key: str, persons: list[Person]) -> None:
-        logging.info('Redis key to write %s', key)
+        logging.info('Redis key to write %s', f'persons_films__{key}')
         await self.redis.set(
-            'get_persons_films__' + key,
+            f'persons_films__{key}',
             orjson.dumps([person.json(by_alias=True) for person in persons]),
             config.REDIS_CACHE,
         )
