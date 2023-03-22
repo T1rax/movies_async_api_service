@@ -1,0 +1,42 @@
+version: '3.4'
+services:
+
+  elasticsearch:
+    image: elasticsearch:8.6.2
+    restart: always
+    environment:
+      - xpack.security.enabled=false
+      - 'ES_JAVA_OPTS=-Xms1000m -Xmx1000m'
+      - discovery.type=single-node
+    # volumes:
+    #   - elasticsearch_test_data:/opt/elasticsearch/test_data
+    ports:
+      - '9200:9200'
+    env_file:
+      - ../../.env
+
+  redis:
+    image: redis:7.0.9-alpine
+
+  fastapi:
+    build: ../../fast_api
+    image: fastapi-image
+    restart: always
+    env_file:
+      - ../../.env
+    depends_on:
+      - elasticsearch
+      - redis
+
+  tests:
+    build: ./
+    env_file:
+      - ../../.env
+    depends_on:
+      - elasticsearch
+      - redis
+      - fastapi
+
+# volumes:
+#   elasticsearch_test_data:
+#   redis_test_data:
