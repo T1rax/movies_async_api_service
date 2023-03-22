@@ -8,8 +8,8 @@ services:
       - xpack.security.enabled=false
       - 'ES_JAVA_OPTS=-Xms1000m -Xmx1000m'
       - discovery.type=single-node
-    # volumes:
-    #   - elasticsearch_test_data:/opt/elasticsearch/test_data
+    volumes:
+      - elasticsearch_test_data:/opt/elasticsearch/test_data
     ports:
       - '9200:9200'
     env_file:
@@ -20,10 +20,11 @@ services:
 
   fastapi:
     build: ../../fast_api
-    image: fastapi-image
     restart: always
     env_file:
       - ../../.env
+    ports:
+      - '8000:8000'
     depends_on:
       - elasticsearch
       - redis
@@ -37,6 +38,5 @@ services:
       - redis
       - fastapi
 
-# volumes:
-#   elasticsearch_test_data:
-#   redis_test_data:
+volumes:
+  elasticsearch_test_data:
