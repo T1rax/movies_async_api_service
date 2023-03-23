@@ -11,7 +11,7 @@ from db.elastic import get_elastic
 from db.redis import get_redis
 from models.film import Film
 from services.config import FilmHelper
-from core.config import RedisConfig
+from core.config import configs
 
 
 class FilmService(FilmHelper):
@@ -51,7 +51,7 @@ class FilmService(FilmHelper):
         await self.redis.set(
             f'film__{film.uuid}',
             film.json(),
-            RedisConfig().REDIS_CACHE)
+            configs.redis_config.REDIS_CACHE)
         
     #All films on path /
     async def get_all_films(self, sort: str, genre: str, page_number: int, page_size: int) -> Optional[Film]:
@@ -119,7 +119,7 @@ class FilmService(FilmHelper):
         for film in films:
             redis_list.append(film.json())
 
-        await self.redis.set(redis_key, json.dumps(redis_list), RedisConfig().REDIS_CACHE)
+        await self.redis.set(redis_key, json.dumps(redis_list), configs.redis_config.REDIS_CACHE)
 
 
 @lru_cache()

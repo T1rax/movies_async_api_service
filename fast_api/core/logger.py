@@ -1,4 +1,4 @@
-from core.config import MainConfig
+from core.config import configs
 from logging import config as logging_config
 
 
@@ -47,7 +47,7 @@ LOGGING = {
     'loggers': {
         '': {
             'handlers': LOG_DEFAULT_HANDLERS,
-            'level': MainConfig().LOG_LEVEL,
+            'level': configs.main_config.LOG_LEVEL,
         },
         'uvicorn.error': {
             'level': 'INFO',

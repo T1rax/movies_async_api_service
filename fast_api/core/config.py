@@ -29,3 +29,12 @@ class ElasticConfig(BaseSettings):
     class Config:
         env_file = './../.env'
         env_file_encoding = 'utf-8'
+
+
+class BaseConfig(BaseSettings):
+    redis_config: RedisConfig = RedisConfig()
+    es_config: ElasticConfig = ElasticConfig()
+    main_config: MainConfig = MainConfig()
+
+
+configs = BaseConfig()

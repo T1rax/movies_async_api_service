@@ -9,7 +9,7 @@ from redis.asyncio import Redis
 from db.elastic import get_elastic
 from db.redis import get_redis
 from models.genre import Genre
-from core.config import RedisConfig
+from core.config import configs
 
 
 class GenreService:
@@ -77,14 +77,14 @@ class GenreService:
         await self.redis.set(
             'get_genres_films',
             orjson.dumps([genre.json(by_alias=True) for genre in genres]),
-            RedisConfig().REDIS_CACHE)
+            configs.redis_config.REDIS_CACHE)
 
     async def _put_genre_to_cache(self, genre: Genre) -> None:
         logging.info('Redis key to write %s', f'genre_uuid_{genre.uuid}')
         await self.redis.set(
             f'genre_uuid_{genre.uuid}',
             genre.json(),
-            RedisConfig().REDIS_CACHE)
+            configs.redis_config.REDIS_CACHE)
 
 
 @lru_cache()

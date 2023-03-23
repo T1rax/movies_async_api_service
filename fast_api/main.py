@@ -4,8 +4,7 @@ from fastapi.responses import ORJSONResponse
 from redis.asyncio import Redis
 
 from api.v1.router import router
-from core.config import RedisConfig, ElasticConfig
-from core.logger import LOGGING
+from core.config import configs
 from db import elastic, redis
 
 
@@ -21,8 +20,8 @@ app = FastAPI(
 
 @app.on_event('startup')
 async def startup():
-    redis.redis = Redis(host=RedisConfig().REDIS_HOST, port=RedisConfig().REDIS_PORT)
-    elastic.es = AsyncElasticsearch(hosts=[f'{ElasticConfig().ELASTIC_HOST}:{ElasticConfig().ELASTIC_PORT}'])
+    redis.redis = Redis(host=configs.redis_config.REDIS_HOST, port=configs.redis_config.REDIS_PORT)
+    elastic.es = AsyncElasticsearch(hosts=[f'{configs.es_config.ELASTIC_HOST}:{configs.es_config.ELASTIC_PORT}'])
 
 
 @app.on_event('shutdown')

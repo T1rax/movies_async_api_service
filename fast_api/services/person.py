@@ -11,7 +11,7 @@ from db.elastic import get_elastic
 from db.redis import get_redis
 from models.person import Person, PersonFilmList
 from services.config import PersonHelper
-from core.config import RedisConfig
+from core.config import configs
 
 
 class PersonService(PersonHelper):
@@ -121,21 +121,21 @@ class PersonService(PersonHelper):
         await self.redis.set(
             redis_key,
             json.dumps(redis_list),
-            RedisConfig().REDIS_CACHE)
+            configs.redis_config.REDIS_CACHE)
 
     async def _put_person_to_cache(self, person: PersonFilmList) -> None:
         logging.info('Redis key to write %s', f'detailed_person__{person.uuid}')
         await self.redis.set(
             f'detailed_person__{person.uuid}',
             person.json(),
-            RedisConfig().REDIS_CACHE)
+            configs.redis_config.REDIS_CACHE)
 
     async def _put_persons_to_cache(self, key: str, persons: list[Person]) -> None:
         logging.info('Redis key to write %s', f'persons_films__{key}')
         await self.redis.set(
             f'persons_films__{key}',
             orjson.dumps([person.json(by_alias=True) for person in persons]),
-            RedisConfig().REDIS_CACHE)
+            configs.redis_config.REDIS_CACHE)
 
 
 @lru_cache()
