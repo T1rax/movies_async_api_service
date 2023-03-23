@@ -17,6 +17,10 @@ services:
 
   redis:
     image: redis:7.0.9-alpine
+    volumes:
+      - redis_test_data:/opt/redis/test_data
+    ports:
+      - '6379:6379'
 
   fastapi:
     build: ../../fast_api
@@ -40,3 +44,4 @@ services:
 
 volumes:
   elasticsearch_test_data:
+  redis_test_data:
