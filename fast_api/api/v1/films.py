@@ -16,7 +16,10 @@ async def film_query(sort: str | None = None,
                      page_number: int = Query(default=1, gt=0, le=100),
                      page_size: int = Query(default=50, gt=0, le=100),
                      film_service: FilmService = Depends(get_film_service)) -> Film:
-    films = await film_service.get_all_films(sort, genre, page_number, page_size)
+    films = await film_service.get_all_films(sort=sort,
+                                             genre=genre,
+                                             page_number=page_number,
+                                             page_size=page_size)
     if not films:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=f'Films not found')
     return films
@@ -39,7 +42,7 @@ async def film_search(query: str | None = None,
             response_model=Film,
             description='Show information about the film')
 async def film_details(film_id: str, film_service: FilmService = Depends(get_film_service)) -> Film:
-    film = await film_service.get_by_id(film_id)
+    film = await film_service.get_by_id(film_id=film_id)
     if not film:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='Film not found')
 
