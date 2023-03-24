@@ -1,7 +1,3 @@
-import sys
-sys.path.insert(0, '/home/tirax/movies_async_api_service/tests/functional')
-sys.path.insert(0, '/opt/app')
-
 import pytest
 
 from settings import test_settings
