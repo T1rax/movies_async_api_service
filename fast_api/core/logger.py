@@ -5,7 +5,7 @@ from logging import config as logging_config
 LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 LOG_DEFAULT_HANDLERS = ['console', ]
 
-# В логгере настраивается логгирование uvicorn-сервера.
+# В логгере настраивается логгирование gunicorn-сервера.
 # Про логирование в Python можно прочитать в документации
 # https://docs.python.org/3/howto/logging.html
 # https://docs.python.org/3/howto/logging-cookbook.html
@@ -18,12 +18,12 @@ LOGGING = {
             'format': LOG_FORMAT
         },
         'default': {
-            '()': 'uvicorn.logging.DefaultFormatter',
+            '()': 'gunicorn.logging.DefaultFormatter',
             'fmt': '%(levelprefix)s %(message)s',
             'use_colors': None,
         },
         'access': {
-            '()': 'uvicorn.logging.AccessFormatter',
+            '()': 'gunicorn.logging.AccessFormatter',
             'fmt': "%(levelprefix)s %(client_addr)s - '%(request_line)s' %(status_code)s",
         },
     },
@@ -49,10 +49,10 @@ LOGGING = {
             'handlers': LOG_DEFAULT_HANDLERS,
             'level': configs.main_config.LOG_LEVEL,
         },
-        'uvicorn.error': {
+        'gunicorn.error': {
             'level': 'INFO',
         },
-        'uvicorn.access': {
+        'gunicorn.access': {
             'handlers': ['access'],
             'level': 'INFO',
             'propagate': False,
