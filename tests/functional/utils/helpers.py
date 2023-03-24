@@ -1,14 +1,15 @@
 from typing import List
+import time
 
-from elasticsearch import Elasticsearch
-from elasticsearch.helpers import bulk, async_bulk
+from elasticsearch.helpers import async_bulk
+import asyncio
 
 
 class Elastic_helper:
-    def __init__(self, es_client, test_settings):
+    def __init__(self, es_client, test_config):
         self.es_client = es_client
-        self.index = test_settings.es_index
-        self.es_id_field = test_settings.es_id_field
+        self.index = test_config.es_index
+        self.es_id_field = test_config.es_id_field
 
 
     def get_es_bulk_query(self, data):
@@ -28,3 +29,38 @@ class Elastic_helper:
         response = await async_bulk(self.es_client, bulk_query)
         if response[1]:
             raise Exception('Ошибка записи данных в Elasticsearch')
+        
+        time.sleep(1) #Пока костыль, нужно дать ластику время обработать данные
+        
+
+class Redis_helper:
+    def __init__(self, redis_client, test_config):
+        self.redis_client = redis_client
+
+    
+    async def clear_cache(self):
+        await self.redis_client.flushall()
+
+
+class Aiohttp_helper:
+    def __init__(self, aiohttp_session, test_config):
+        self.session = aiohttp_session
+
+    
+    async def make_get_request(self, url, path, params):
+        async with self.session.get(url+path, params=params) as response:
+            body = await response.json()
+            headers = response.headers
+            status = response.status
+
+        if isinstance(body, list):
+            length = len(body)
+        else:
+            length = 0
+
+        return status, length, body, headers
+
+
+class Async_helper:
+    def __init__(self, event_loop, test_config):
+        self.loop = event_loop
