@@ -22,14 +22,19 @@ from settings import test_settings
     ]
 )
 @pytest.mark.asyncio
-async def test_search(query_data, expected_answer, es_helper, es_mock, redis_helper, aiohttp_helper):
+async def test_search(query_data, expected_answer, prepare_film_es, redis_clear_cache, aiohttp_helper):
 
-    # 1. Генерируем данные и загружаем данные в ES
-
-    await es_helper.es_write_data(es_mock.generate_film_data(60))
+    # 1. Генерируем данные и загружаем данные в ES (запускается 1 раз для всех тестов)
+    try:
+        await prepare_film_es
+    except RuntimeError:
+        prepare_film_es
     
-    # 2. Чистим кеш редиса
-    await redis_helper.clear_cache()
+    # 2. Чистим кеш редиса (запускается 1 раз для всех тестов)
+    try:
+        await redis_clear_cache
+    except RuntimeError:
+        redis_clear_cache
 
     # 3. Запрашиваем данные из ES по API
     status, array_length, body, headers = await aiohttp_helper.make_get_request(test_settings.service_url, '/api/v1/films/search', query_data)

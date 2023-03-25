@@ -12,7 +12,8 @@ from redis.asyncio import Redis
 
 from utils.helpers import Elastic_helper, Redis_helper, Async_helper, Aiohttp_helper
 from testdata.es_mapping import Elastic_mock
-from settings import test_settings
+from settings import test_settings, film_settings, genre_settings, person_settings
+
 
 # AsyncIO
 @pytest.fixture(scope='session')
@@ -25,6 +26,7 @@ def event_loop():
 def async_helper(event_loop, test_config):
     return Async_helper(event_loop, test_config)
 
+
 # ElasticSearch
 @pytest_asyncio.fixture(scope='session')
 async def es_client():
@@ -32,13 +34,21 @@ async def es_client():
     yield client
     await client.close()
 
-@pytest.fixture
-def es_helper(es_client, test_config):
-    return Elastic_helper(es_client, test_config)
+@pytest.fixture(scope='session')
+async def prepare_film_es(es_client):
+    es_helper = Elastic_helper(es_client, film_settings)
+    es_mock = Elastic_mock()
 
-@pytest.fixture
-def es_mock():
-    return Elastic_mock()
+    #Данные для тестов фильмов
+    await es_helper.delete_index()
+    await es_helper.create_index()
+    await es_helper.es_write_data(es_mock.generate_film_data(53))
+    await es_helper.es_write_data(es_mock.generate_film_with_id())
+    await es_helper.es_write_data(es_mock.generate_film_with_id('redisccachetest-5a1c-4b95-b32b-fdd89b40dddc'))
+    await es_helper.check_index()
+
+    return es_helper
+
 
 # Redis
 @pytest_asyncio.fixture(scope='session')
@@ -47,9 +57,16 @@ async def redis_client():
     yield client
     await client.close()
 
+@pytest.fixture(scope='session')
+async def redis_clear_cache(redis_client):
+    redis_helper = Redis_helper(redis_client, test_settings)
+
+    await redis_helper.clear_cache()
+
 @pytest.fixture
-def redis_helper(redis_client, test_config):
-    return Redis_helper(redis_client, test_config)
+def redis_helper(redis_client):
+    return Redis_helper(redis_client, test_settings)
+
 
 # Aiohttp
 @pytest_asyncio.fixture(scope='session')
