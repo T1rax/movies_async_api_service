@@ -80,7 +80,7 @@ async def test_film_redis_cache(test_config, film_id, expected_answer, prepare_f
     redis_cache = json.loads(redis_cache)
     redis_cache['id'] = redis_cache.pop('uuid')
 
-    # 4. Проверяем ответ 
+    # 5. Проверяем ответ 
     assert status == expected_answer['status']
     assert body.get('id') == expected_answer['id'] 
     assert redis_cache == body

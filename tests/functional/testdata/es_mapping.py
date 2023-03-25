@@ -69,5 +69,37 @@ class Elastic_mock:
 
         return es_data
     
+    def generate_genre_data(self):
+        
+        es_data = [
+            {
+            'id': 'genre-id-1',
+            'name': 'Action',
+            'description': 'Cool genre',
+            },
+            {
+            'id': 'genre-id-2',
+            'name': 'Sci-Fi',
+            'description': 'Cool genre',
+            },
+            {
+            'id': 'genre-id-3',
+            'name': 'Sci-Fi',
+            'description': 'Documentary',
+            },
+            {
+            'id': 'genre-id-4',
+            'name': 'Sci-Fi',
+            'description': 'Detective',
+            },
+            {
+            'id': 'genre-id-5',
+            'name': 'Sci-Fi',
+            'description': 'Horror',
+            },
+        ]
+
+        return es_data
+    
 
 es_mock = Elastic_mock()
