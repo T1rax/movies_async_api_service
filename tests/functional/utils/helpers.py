@@ -1,9 +1,10 @@
-from typing import List
-import time
+import backoff
 
 from elasticsearch.helpers import async_bulk
-import asyncio
 
+class NoResultsEsception(Exception):
+    "Raised when service return empty results"
+    pass
 
 class Elastic_helper:
     def __init__(self, es_client, test_config):
@@ -29,8 +30,18 @@ class Elastic_helper:
         response = await async_bulk(self.es_client, bulk_query)
         if response[1]:
             raise Exception('Ошибка записи данных в Elasticsearch')
-        
-        time.sleep(1) #Пока костыль, нужно дать ластику время обработать данные
+
+        await self.check_index()
+
+    @backoff.on_exception(backoff.expo, NoResultsEsception, max_time=30)
+    async def check_index(self):
+
+        result = await self.es_client.search(index=self.index, size=1)
+
+        if result['hits']['total']['value'] == 0:
+            raise NoResultsEsception
+
+
         
 
 class Redis_helper:
