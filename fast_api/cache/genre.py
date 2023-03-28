@@ -11,8 +11,7 @@ class GenreCache(RedisCache):
     def cache_name(self, func) -> list[Genre] | None:
         @functools.wraps(func)
         async def wrapper(*args, **kwargs) -> list[Genre] | None:
-            key = 'genre__' + \
-                  str(func.__name__)
+            key = self.create_key(func.__name__, kwargs)
             r = await get_redis()
             if await r.exists(key):
                 result = await r.get(key)
@@ -30,9 +29,7 @@ class GenreCache(RedisCache):
         @functools.wraps(func)
         async def wrapper(*args, **kwargs) -> Genre | None:
             print(args)
-            key = 'genre__' + \
-                  str(func.__name__) + '_' + \
-                  str(kwargs.get('genre_id'))
+            key = self.create_key(func.__name__, kwargs)
             r = await get_redis()
             if await r.exists(key):
                 result = await r.get(key)

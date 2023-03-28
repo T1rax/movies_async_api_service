@@ -9,6 +9,7 @@ class MainConfig(BaseSettings):
                       redis.exceptions.TimeoutError,
                       elasticsearch.ConnectionError,
                       elasticsearch.ConnectionTimeout)
+    MAX_TIME: int = 60 * 10
 
     class Config:
         env_file = './../.env'

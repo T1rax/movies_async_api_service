@@ -11,9 +11,7 @@ class PersonCache(RedisCache):
     def cache_name(self, func):
         @functools.wraps(func)
         async def wrapper(*args, **kwargs):
-            key = 'person__' + \
-                 str(func.__name__) + '_' + \
-                 str(kwargs.get('person_id'))
+            key = self.create_key(func.__name__, kwargs)
             r = await get_redis()
             if await r.exists(key):
                 result = await r.get(key)
@@ -30,9 +28,7 @@ class PersonCache(RedisCache):
     def cache_id(self, func) -> Person | None:
         @functools.wraps(func)
         async def wrapper(*args, **kwargs) -> Person | None:
-            key = 'person__' + \
-                  str(func.__name__) + '_' + \
-                  str(kwargs.get('person_id'))
+            key = self.create_key(func.__name__, kwargs)
             r = await get_redis()
             if await r.exists(key):
                 result = await r.get(key)
@@ -49,11 +45,7 @@ class PersonCache(RedisCache):
     def cache_search(self, func) -> list[Person] | None:
         @functools.wraps(func)
         async def wrapper(*args, **kwargs) -> list[Person] | None:
-            key = 'person__' + \
-                  str(func.__name__) + '_' + \
-                  str(kwargs.get('q')) + '_' + \
-                  str(kwargs.get('page_number')) + '_' + \
-                  str(kwargs.get('page_size'))
+            key = self.create_key(func.__name__, kwargs)
             r = await get_redis()
             if await r.exists(key):
                 result = await r.get(key)

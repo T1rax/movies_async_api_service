@@ -11,12 +11,7 @@ class FilmCache(RedisCache):
     def cache_name(self, func) -> list[Film] | None:
         @functools.wraps(func)
         async def wrapper(*args, **kwargs) -> list[Film] | None:
-            key = 'film__' + \
-                  str(func.__name__) + '_' + \
-                  str(kwargs.get('genre')) + '_' + \
-                  str(kwargs.get('page_number')) + '_' + \
-                  str(kwargs.get('page_size')) + '_' + \
-                  str(kwargs.get('sort'))
+            key = self.create_key(func.__name__, kwargs)
             r = await get_redis()
             if await r.exists(key):
                 result = await r.get(key)
@@ -33,9 +28,7 @@ class FilmCache(RedisCache):
     def cache_id(self, func) -> Film | None:
         @functools.wraps(func)
         async def wrapper(*args, **kwargs) -> Film | None:
-            key = 'film__' + \
-                  str(func.__name__) + '_' + \
-                  str(kwargs.get('film_id'))
+            key = self.create_key(func.__name__, kwargs)
             r = await get_redis()
             if await r.exists(key):
                 result = await r.get(key)
@@ -52,11 +45,7 @@ class FilmCache(RedisCache):
     def cache_search(self, func) -> list[Film] | None:
         @functools.wraps(func)
         async def wrapper(*args, **kwargs) -> list[Film] | None:
-            key = 'film__' + \
-                  str(func.__name__) + '_' + \
-                  str(kwargs.get('q')) + '_' + \
-                  str(kwargs.get('page_number')) + '_' + \
-                  str(kwargs.get('page_size'))
+            key = self.create_key(func.__name__, kwargs)
             r = await get_redis()
             if await r.exists(key):
                 result = await r.get(key)

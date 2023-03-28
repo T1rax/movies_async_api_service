@@ -16,7 +16,7 @@ class GenreService:
         self.redis = redis
         self.elastic = elastic
 
-    @backoff.on_exception(backoff.expo, configs.main_config.EXCEPTS)
+    @backoff.on_exception(backoff.expo, configs.main_config.EXCEPTS, max_time=configs.main_config.MAX_TIME)
     @cache.cache_name
     async def get_genres(self) -> list[Genre] | None:
         data = await self._get_genres_from_elastic()
@@ -24,7 +24,7 @@ class GenreService:
             return None
         return data
 
-    @backoff.on_exception(backoff.expo, configs.main_config.EXCEPTS)
+    @backoff.on_exception(backoff.expo, configs.main_config.EXCEPTS, max_time=configs.main_config.MAX_TIME)
     @cache.cache_id
     async def get_by_id(self, genre_id: str) -> Genre | None:
         data = await self._get_genre_from_elastic(genre_id)
