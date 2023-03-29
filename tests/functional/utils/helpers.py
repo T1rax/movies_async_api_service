@@ -1,16 +1,18 @@
-from typing import List
-import time
+import backoff
 
 from elasticsearch.helpers import async_bulk
-import asyncio
 
+class NoResultsEsception(Exception):
+    "Raised when service return empty results"
+    pass
 
 class Elastic_helper:
     def __init__(self, es_client, test_config):
         self.es_client = es_client
         self.index = test_config.es_index
         self.es_id_field = test_config.es_id_field
-
+        self.settings = test_config.es_index_settings
+        self.mappings = test_config.es_index_mapping
 
     def get_es_bulk_query(self, data):
         
@@ -20,17 +22,27 @@ class Elastic_helper:
 
         return bulk_query  
     
+    async def delete_index(self):
+        await self.es_client.options(ignore_status=[400,404]).indices.delete(index=self.index)
+
+    async def create_index(self):
+        await self.es_client.indices.create(index=self.index, settings=self.settings, mappings=self.mappings)  
+
     async def es_write_data(self, data):
 
         bulk_query = self.get_es_bulk_query(data)
 
-        await self.es_client.options(ignore_status=[400,404]).indices.delete(index=self.index)
-
         response = await async_bulk(self.es_client, bulk_query)
         if response[1]:
             raise Exception('Ошибка записи данных в Elasticsearch')
-        
-        time.sleep(1) #Пока костыль, нужно дать ластику время обработать данные
+
+    @backoff.on_exception(backoff.expo, NoResultsEsception, max_time=30)
+    async def check_index(self):
+
+        result = await self.es_client.search(index=self.index, size=1)
+
+        if result['hits']['total']['value'] == 0:
+            raise NoResultsEsception
         
 
 class Redis_helper:
@@ -40,14 +52,16 @@ class Redis_helper:
     
     async def clear_cache(self):
         await self.redis_client.flushall()
-
+        
+    async def get_value(self, key):
+        return await self.redis_client.get(key)
+    
 
 class Aiohttp_helper:
     def __init__(self, aiohttp_session, test_config):
         self.session = aiohttp_session
-
     
-    async def make_get_request(self, url, path, params):
+    async def make_get_request(self, url, path, params=None):
         async with self.session.get(url+path, params=params) as response:
             body = await response.json()
             headers = response.headers
