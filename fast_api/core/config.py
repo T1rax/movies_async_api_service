@@ -1,9 +1,15 @@
+import elasticsearch, redis
 from pydantic import BaseSettings, Field
 
 
 class MainConfig(BaseSettings):
     """ Project settings """
     LOG_LEVEL: str = Field('INFO', env='LOG_LEVEL')
+    EXCEPTS: tuple = (redis.exceptions.ConnectionError,
+                      redis.exceptions.TimeoutError,
+                      elasticsearch.ConnectionError,
+                      elasticsearch.ConnectionTimeout)
+    MAX_TIME: int = 60 * 10
 
     class Config:
         env_file = './../.env'

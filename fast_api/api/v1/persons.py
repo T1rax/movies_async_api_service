@@ -30,7 +30,7 @@ async def person_search(query: str | None = None,
 async def person_details(person_id: str,
                          person_service: PersonService = Depends(get_person_service)
                          ) -> Person:
-    person = await person_service.get_by_id(person_id)
+    person = await person_service.get_by_id(person_id=person_id)
     if not person:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
                             detail='Person not found')
@@ -43,7 +43,7 @@ async def person_details(person_id: str,
 async def person_films(person_id: str,
                        person_service: PersonService = Depends(get_person_service)
                        ) -> Person:
-    person = await person_service.get_persons_films(person_id)
+    person = await person_service.get_persons_films(person_id=person_id)
     if not person:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
                             detail='Person not found')
