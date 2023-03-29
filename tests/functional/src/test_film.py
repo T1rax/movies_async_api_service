@@ -76,7 +76,7 @@ async def test_film_redis_cache(test_config, film_id, expected_answer, prepare_f
     status, array_length, body, headers = await aiohttp_helper.make_get_request(test_config.service_url, '/api/v1/films/'+film_id)
 
     # 4. Проверяем наличие ключа в редисе
-    redis_cache = await redis_helper.get_value('get_by_id___'+film_id+'___None___None___None___None___None___None')
+    redis_cache = await redis_helper.get_value('get_by_id___'+film_id+'___None___None___None___None___None___None___None')
     redis_cache = json.loads(redis_cache)
     redis_cache['id'] = redis_cache.pop('uuid')
 
