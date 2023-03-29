@@ -76,7 +76,7 @@ async def test_genre_id_redis_cache(test_config, genre_id, expected_answer, prep
     status, array_length, body, headers = await aiohttp_helper.make_get_request(test_config.service_url, '/api/v1/genres/'+genre_id)
 
     # 4. Проверяем наличие ключа в редисе
-    redis_cache = await redis_helper.get_value('genre_uuid_'+genre_id)
+    redis_cache = await redis_helper.get_value('get_by_id___None___'+genre_id+'___None___None___None___None___None')
     redis_cache = json.loads(redis_cache)
     redis_cache['id'] = redis_cache.pop('uuid')
 
@@ -146,7 +146,7 @@ async def test_genre_all_genres_redis_cache(test_config, expected_answer, prepar
     status, array_length, body, headers = await aiohttp_helper.make_get_request(test_config.service_url, '/api/v1/genres/')
 
     # 4. Проверяем наличие ключа в редисе
-    redis_cache = await redis_helper.get_value('get_genres_films')
+    redis_cache = await redis_helper.get_value('get_genres___None___None___None___None___None___None___None')
     redis_cache = json.loads(redis_cache)
     for i in range(len(redis_cache)):
         redis_cache[i] = json.loads(redis_cache[i])
