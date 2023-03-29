@@ -100,6 +100,58 @@ class Elastic_mock:
         ]
 
         return es_data
+
+    def generate_person_data(self):
+        es_data = [
+            {
+                'id': 'person-id-1',
+                'full_name': 'Edd Gee',
+                'films': [
+                        {
+                          "id": "111",
+                          "roles": [
+                            "actor"
+                          ],
+                          "imdb_rating": 7,
+                          "title": "The Star"
+                        },
+                        {
+                          "id": "222",
+                          "roles": [
+                            "actor"
+                          ],
+                          "imdb_rating": 6.8,
+                          "title": "The Wars"
+                        }
+                      ],
+                'modified': datetime.datetime.now().isoformat()
+            },
+            {
+                'id': 'person-id-2',
+                'full_name': 'Alan Po',
+                'films': [
+                    {
+                        "id": "333",
+                        "roles": [
+                            "writer"
+                        ],
+                        "imdb_rating": 1,
+                        "title": "The Movie 2"
+                    },
+                    {
+                        "id": "444",
+                        "roles": [
+                            "actor"
+                        ],
+                        "imdb_rating": 9,
+                        "title": "Test Film 2"
+                    }
+                ],
+                'modified': datetime.datetime.now().isoformat()
+            }
+        ]
+
+        return es_data
     
 
 es_mock = Elastic_mock()
