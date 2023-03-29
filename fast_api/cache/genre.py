@@ -18,6 +18,9 @@ class GenreCache(RedisCache):
                 return [Genre.parse_raw(item) for item in orjson.loads(result)]
             else:
                 result = await func(*args, **kwargs)
+                if result is None:
+                    return None
+
                 await r.set(
                     key,
                     orjson.dumps([genre.json(by_alias=True) for genre in result]),
@@ -36,6 +39,9 @@ class GenreCache(RedisCache):
                 return Genre.parse_raw(result)
             else:
                 result = await func(*args, **kwargs)
+                if result is None:
+                    return None
+
                 await r.set(
                     key,
                     result.json(),

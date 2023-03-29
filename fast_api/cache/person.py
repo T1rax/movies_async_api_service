@@ -18,6 +18,9 @@ class PersonCache(RedisCache):
                 return [PersonFilmList.parse_raw(item) for item in orjson.loads(result)]
             else:
                 result = await func(*args, **kwargs)
+                if result is None:
+                    return None
+
                 await r.set(
                     key,
                     orjson.dumps([item.json(by_alias=True) for item in result]),
@@ -35,6 +38,9 @@ class PersonCache(RedisCache):
                 return Person.parse_raw(result)
             else:
                 result = await func(*args, **kwargs)
+                if result is None:
+                    return None
+
                 await r.set(
                     key,
                     result.json(),
@@ -52,6 +58,9 @@ class PersonCache(RedisCache):
                 return [Person.parse_raw(item) for item in orjson.loads(result)]
             else:
                 result = await func(*args, **kwargs)
+                if result is None:
+                    return None
+
                 await r.set(
                     key,
                     orjson.dumps([item.json() for item in result]),
