@@ -1,10 +1,8 @@
 import pytest
 import json
+from http import HTTPStatus
 
 from settings import test_settings
-
-#  Название теста должно начинаться со слова `test_`
-#  Любой тест с асинхронными вызовами нужно оборачивать декоратором `pytest.mark.asyncio`, который следит за запуском и работой цикла событий. 
 
 
 @pytest.mark.parametrize(
@@ -13,12 +11,12 @@ from settings import test_settings
         (
                 test_settings,
                 {'query': 'The Star'},
-                {'status': 200, 'length': 50}
+                {'status': HTTPStatus.OK, 'length': 50}
         ),
         (
                 test_settings,
                 {'query': 'Mashed potato'},
-                {'status': 404, 'length': 0}
+                {'status': HTTPStatus.NOT_FOUND, 'length': 0}
         )
     ]
 )
@@ -51,12 +49,12 @@ async def test_films_search(query_data, expected_answer, prepare_film_es, redis_
         (
                 test_settings,
                 {'query': 'Edd'},
-                {'status': 200, 'length': 1}
+                {'status': HTTPStatus.OK, 'length': 1}
         ),
         (
                 test_settings,
                 {'query': 'Tom'},
-                {'status': 404, 'length': 0}
+                {'status': HTTPStatus.NOT_FOUND, 'length': 0}
         )
     ]
 )
@@ -89,7 +87,7 @@ async def test_persons_search(parameters, expected_answer, prepare_person_es, re
         (
                 test_settings,
                 {'query': 'Edd', 'page_number': 1, 'page_size': 50},
-                {'status': 200, 'length': 1}
+                {'status': HTTPStatus.OK, 'length': 1}
         )
     ]
 )

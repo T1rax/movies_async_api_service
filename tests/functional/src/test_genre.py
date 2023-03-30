@@ -1,5 +1,6 @@
 import pytest
 import json
+from http import HTTPStatus
 
 from settings import test_settings
 
@@ -10,17 +11,17 @@ from settings import test_settings
         (
                 test_settings,
                 'genre-id-1',
-                {'status': 200, 'id': 'genre-id-1'}
+                {'status': HTTPStatus.OK, 'id': 'genre-id-1'}
         ),
         (
                 test_settings,
                 'genre-id-123',
-                {'status': 404, 'id': None}
+                {'status': HTTPStatus.NOT_FOUND, 'id': None}
         ),
         (
                 test_settings,
                 '12334',
-                {'status': 404, 'id': None}
+                {'status': HTTPStatus.NOT_FOUND, 'id': None}
         ),
     ]
 )
@@ -53,7 +54,7 @@ async def test_genre_id(test_config, genre_id, expected_answer, prepare_genre_es
         (
                 test_settings,
                 'genre-id-1',
-                {'status': 200, 'id': 'genre-id-1'}
+                {'status': HTTPStatus.OK, 'id': 'genre-id-1'}
         ),
     ]
 )
@@ -91,7 +92,7 @@ async def test_genre_id_redis_cache(test_config, genre_id, expected_answer, prep
     [
         (
                 test_settings,
-                {'status': 200, 'length': 5}
+                {'status': HTTPStatus.OK, 'length': 5}
         ),
     ]
 )
@@ -123,7 +124,7 @@ async def test_genre_all_genres(test_config, expected_answer, prepare_genre_es, 
     [
         (
                 test_settings,
-                {'status': 200, 'length': 5}
+                {'status': HTTPStatus.OK, 'length': 5}
         ),
     ]
 )

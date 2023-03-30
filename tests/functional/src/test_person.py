@@ -1,6 +1,6 @@
 import pytest
-import logging
 import json
+from http import HTTPStatus
 
 from settings import test_settings
 
@@ -11,17 +11,17 @@ from settings import test_settings
         (
                 test_settings,
                 'person-id-1',
-                {'status': 200, 'id': 'person-id-1'}
+                {'status': HTTPStatus.OK, 'id': 'person-id-1'}
         ),
         (
                 test_settings,
                 'person-id-222',
-                {'status': 404, 'id': None}
+                {'status': HTTPStatus.NOT_FOUND, 'id': None}
         ),
         (
                 test_settings,
                 '111222333',
-                {'status': 404, 'id': None}
+                {'status': HTTPStatus.NOT_FOUND, 'id': None}
         )
     ]
 )
@@ -54,7 +54,7 @@ async def test_person_id(test_config, person_id, expected_answer, prepare_person
         (
                 test_settings,
                 'person-id-1',
-                {'status': 200, 'id': 'person-id-1'}
+                {'status': HTTPStatus.OK, 'id': 'person-id-1'}
         )
     ]
 )
@@ -93,7 +93,7 @@ async def test_person_id_redis_cache(test_config, person_id, expected_answer, pr
         (
                 test_settings,
                 'person-id-1',
-                {'status': 200, 'length': 2}
+                {'status': HTTPStatus.OK, 'length': 2}
         )
     ]
 )
@@ -126,7 +126,7 @@ async def test_person_films(test_config, person_id, expected_answer, prepare_per
         (
                 test_settings,
                 'person-id-1',
-                {'status': 200, 'length': 2}
+                {'status': HTTPStatus.OK, 'length': 2}
         )
     ]
 )

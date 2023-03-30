@@ -1,5 +1,6 @@
 import pytest
 import json
+from http import HTTPStatus
 
 from settings import test_settings
 
@@ -10,17 +11,17 @@ from settings import test_settings
         (
                 test_settings,
                 'qwerty123-5a1c-4b95-b32b-fdd89b40dddc',
-                {'status': 200, 'id': 'qwerty123-5a1c-4b95-b32b-fdd89b40dddc'}
+                {'status': HTTPStatus.OK, 'id': 'qwerty123-5a1c-4b95-b32b-fdd89b40dddc'}
         ),
         (
                 test_settings,
                 'falseid123-5a1c-4b95-b32b-fdd89b40dddc',
-                {'status': 404, 'id': None}
+                {'status': HTTPStatus.NOT_FOUND, 'id': None}
         ),
         (
                 test_settings,
                 '12334',
-                {'status': 404, 'id': None}
+                {'status': HTTPStatus.NOT_FOUND, 'id': None}
         ),
     ]
 )
@@ -53,7 +54,7 @@ async def test_film_id(test_config, film_id, expected_answer, prepare_film_es, r
         (
                 test_settings,
                 'redisccachetest-5a1c-4b95-b32b-fdd89b40dddc',
-                {'status': 200, 'id': 'redisccachetest-5a1c-4b95-b32b-fdd89b40dddc'}
+                {'status': HTTPStatus.OK, 'id': 'redisccachetest-5a1c-4b95-b32b-fdd89b40dddc'}
         ),
     ]
 )
@@ -92,27 +93,27 @@ async def test_film_redis_cache(test_config, film_id, expected_answer, prepare_f
         (
                 test_settings,
                 {'page_number': 1, 'page_size': 50},
-                {'status': 200, 'length': 50}
+                {'status': HTTPStatus.OK, 'length': 50}
         ),
         (
                 test_settings,
                 {'page_number': 1, 'page_size': 20},
-                {'status': 200, 'length': 20}
+                {'status': HTTPStatus.OK, 'length': 20}
         ),
         (
                 test_settings,
                 {'page_number': 3, 'page_size': 20},
-                {'status': 200, 'length': 15}
+                {'status': HTTPStatus.OK, 'length': 15}
         ),
         (
                 test_settings,
                 {'genre': 'genre-id-1'},
-                {'status': 200, 'length': 50}
+                {'status': HTTPStatus.OK, 'length': 50}
         ),
         (
                 test_settings,
                 {'genre': 'genre-id-fake'},
-                {'status': 404, 'length': 0}
+                {'status': HTTPStatus.NOT_FOUND, 'length': 0}
         ),
     ]
 )
@@ -185,62 +186,62 @@ async def test_film_sort(test_config, parameters, expected_answer, prepare_film_
         (
                 test_settings,
                 {'page_number': 1},
-                {'status': 200}
+                {'status': HTTPStatus.OK}
         ),
         (
                 test_settings,
                 {'page_number': 'test'},
-                {'status': 422}
+                {'status': HTTPStatus.UNPROCESSABLE_ENTITY}
         ),
         (
                 test_settings,
                 {'page_number': 0},
-                {'status': 422}
+                {'status': HTTPStatus.UNPROCESSABLE_ENTITY}
         ),
         (
                 test_settings,
                 {'page_number': -1},
-                {'status': 422}
+                {'status': HTTPStatus.UNPROCESSABLE_ENTITY}
         ),
         (
                 test_settings,
                 {'page_number': 100},
-                {'status': 404}
+                {'status': HTTPStatus.NOT_FOUND}
         ),
         (
                 test_settings,
                 {'page_number': 1000},
-                {'status': 422}
+                {'status': HTTPStatus.UNPROCESSABLE_ENTITY}
         ),
         (
                 test_settings,
                 {'page_size': 50},
-                {'status': 200}
+                {'status': HTTPStatus.OK}
         ),
         (
                 test_settings,
                 {'page_size': 'test'},
-                {'status': 422}
+                {'status': HTTPStatus.UNPROCESSABLE_ENTITY}
         ),
         (
                 test_settings,
                 {'page_size': 0},
-                {'status': 422}
+                {'status': HTTPStatus.UNPROCESSABLE_ENTITY}
         ),
         (
                 test_settings,
                 {'page_size': -1},
-                {'status': 422}
+                {'status': HTTPStatus.UNPROCESSABLE_ENTITY}
         ),
         (
                 test_settings,
                 {'page_size': 100},
-                {'status': 200}
+                {'status': HTTPStatus.OK}
         ),
         (
                 test_settings,
                 {'page_size': 1000},
-                {'status': 422}
+                {'status': HTTPStatus.UNPROCESSABLE_ENTITY}
         ),
     ]
 )
