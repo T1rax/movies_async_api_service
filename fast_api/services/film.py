@@ -18,7 +18,7 @@ class FilmService(FilmHelper):
         self.cache_cli = cache_cli
         self.elastic = elastic
 
-    @backoff.on_exception(backoff.expo, configs.main_config.EXCEPTS, max_time=configs.main_config.MAX_TIME)
+    @backoff.on_exception(backoff.expo, configs.main_config.excepts, max_time=configs.main_config.max_time)
     @cache.cache_name
     async def get_all_films(self, sort: str, genre: str, page_number: int, page_size: int) -> Film | None:
         body = self._generate_genre_query(genre)
@@ -29,7 +29,7 @@ class FilmService(FilmHelper):
             return None
         return data
 
-    @backoff.on_exception(backoff.expo, configs.main_config.EXCEPTS, max_time=configs.main_config.MAX_TIME)
+    @backoff.on_exception(backoff.expo, configs.main_config.excepts, max_time=configs.main_config.max_time)
     @cache.cache_id
     async def get_by_id(self, film_id: str) -> Film | None:
         data = await self._get_film_from_elastic(film_id)
@@ -37,7 +37,7 @@ class FilmService(FilmHelper):
             return None
         return data
 
-    @backoff.on_exception(backoff.expo, configs.main_config.EXCEPTS, max_time=configs.main_config.MAX_TIME)
+    @backoff.on_exception(backoff.expo, configs.main_config.excepts, max_time=configs.main_config.max_time)
     @cache.cache_search
     async def get_by_search(self, q: str, page_number: int, page_size: int) -> list[Film] | None:
         films = await self._get_search_from_elastic(q=q, page_number=page_number, page_size=page_size)

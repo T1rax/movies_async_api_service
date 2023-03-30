@@ -2,6 +2,7 @@ from http import HTTPStatus
 from fastapi import APIRouter, Depends, HTTPException, Query
 from models.film import Film
 from services.film import FilmService, get_film_service
+from core.pagination import PaginatedParams
 
 
 router = APIRouter()
@@ -13,13 +14,12 @@ router = APIRouter()
             description='Show information about all films')
 async def film_query(sort: str | None = None,
                      genre: str | None = None,
-                     page_number: int = Query(default=1, gt=0, le=100),
-                     page_size: int = Query(default=50, gt=0, le=100),
+                     pagination_data: PaginatedParams = Depends(PaginatedParams),
                      film_service: FilmService = Depends(get_film_service)) -> Film:
     films = await film_service.get_all_films(sort=sort,
                                              genre=genre,
-                                             page_number=page_number,
-                                             page_size=page_size)
+                                             page_number=pagination_data.page_number,
+                                             page_size=pagination_data.page_size)
     if not films:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=f'Films not found')
     return films
@@ -29,10 +29,11 @@ async def film_query(sort: str | None = None,
             response_model=list[Film],
             description='Search for the film')
 async def film_search(query: str | None = None,
-                      page_number: int = Query(default=1, gt=0, le=100),
-                      page_size: int = Query(default=50, gt=0, le=100),
+                      pagination_data: PaginatedParams = Depends(PaginatedParams),
                       film_service: FilmService = Depends(get_film_service)) -> Film:
-    films = await film_service.get_by_search(q=query, page_number=page_number, page_size=page_size)
+    films = await film_service.get_by_search(q=query,
+                                             page_number=pagination_data.page_number,
+                                             page_size=pagination_data.page_size)
     if not films:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=f'Films not found')
     return films

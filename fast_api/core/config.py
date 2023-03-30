@@ -4,12 +4,14 @@ from pydantic import BaseSettings, Field
 
 class MainConfig(BaseSettings):
     """ Project settings """
-    LOG_LEVEL: str = Field('INFO', env='LOG_LEVEL')
-    EXCEPTS: tuple = (redis.exceptions.ConnectionError,
+    log_level: str = Field('INFO', env='LOG_LEVEL')
+    excepts: tuple = (redis.exceptions.ConnectionError,
                       redis.exceptions.TimeoutError,
                       elasticsearch.ConnectionError,
                       elasticsearch.ConnectionTimeout)
-    MAX_TIME: int = 60 * 10
+    max_time: int = 60 * 10
+    default_page_number: int = 1
+    default_page_size: int = 50
 
     class Config:
         env_file = './../.env'
@@ -17,10 +19,10 @@ class MainConfig(BaseSettings):
 
 
 class CacheConfig(BaseSettings):
-    """ Redis settings """
-    CACHE_HOST: str = Field('127.0.0.1', env='CACHE_HOST')
-    CACHE_PORT: int = Field(6379, env='CACHE_PORT')
-    CACHE_EXP: int = Field(60 * 5, env='CACHE_EXP')  # 5 minutes
+    """ Cache settings """
+    cache_host: str = Field('127.0.0.1', env='CACHE_HOST')
+    cache_port: int = Field(6379, env='CACHE_PORT')
+    cache_exp: int = Field(60 * 5, env='CACHE_EXP')  # 5 minutes
 
     class Config:
         env_file = './../.env'
@@ -29,8 +31,8 @@ class CacheConfig(BaseSettings):
 
 class ElasticConfig(BaseSettings):
     """ Elastic settings """
-    ELASTIC_HOST: str = Field('127.0.0.1', env='ELASTIC_HOST')
-    ELASTIC_PORT: int = Field(9200, env='ELASTIC_PORT')
+    elastic_host: str = Field('127.0.0.1', env='ELASTIC_HOST')
+    elastic_port: int = Field(9200, env='ELASTIC_PORT')
 
     class Config:
         env_file = './../.env'

@@ -23,7 +23,7 @@ class PersonCache(Cache):
                 await c.set(
                     key,
                     orjson.dumps([item.json(by_alias=True) for item in result]),
-                    configs.cache_config.CACHE_EXP)
+                    configs.cache_config.cache_exp)
                 return result
         return wrapper
 
@@ -43,7 +43,7 @@ class PersonCache(Cache):
                 await c.set(
                     key,
                     result.json(),
-                    configs.cache_config.CACHE_EXP)
+                    configs.cache_config.cache_exp)
                 return result
         return wrapper
 
@@ -63,7 +63,7 @@ class PersonCache(Cache):
                 await c.set(
                     key,
                     orjson.dumps([item.json() for item in result]),
-                    configs.cache_config.CACHE_EXP)
+                    configs.cache_config.cache_exp)
                 return result
         return wrapper
 
