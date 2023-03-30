@@ -10,8 +10,6 @@ services:
       - discovery.type=single-node
     volumes:
       - elasticsearch_test_data:/opt/elasticsearch/test_data
-    ports:
-      - '9200:9200'
     env_file:
       - ../../.env
 
@@ -19,16 +17,12 @@ services:
     image: redis:7.0.9-alpine
     volumes:
       - redis_test_data:/opt/redis/test_data
-    ports:
-      - '6379:6379'
 
   fastapi:
     build: ../../fast_api
     restart: always
     env_file:
       - ../../.env
-    ports:
-      - '8000:8000'
     depends_on:
       - elasticsearch
       - redis
