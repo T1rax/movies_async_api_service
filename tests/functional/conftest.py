@@ -62,6 +62,18 @@ async def prepare_genre_es(es_client):
 
     return es_helper
 
+@pytest.fixture(scope='session')
+async def prepare_person_es(es_client):
+    es_helper = Elastic_helper(es_client, person_settings)
+    es_mock = Elastic_mock()
+
+    #Данные для тестов фильмов
+    await es_helper.delete_index()
+    await es_helper.create_index()
+    await es_helper.es_write_data(es_mock.generate_person_data())
+    await es_helper.check_index()
+
+    return es_helper
 
 # Redis
 @pytest_asyncio.fixture(scope='session')
