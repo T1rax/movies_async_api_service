@@ -16,7 +16,7 @@ class PersonService:
         self.cache_cli = cache_cli
         self.elastic = elastic
 
-    @backoff.on_exception(backoff.expo, configs.main_config.excepts, max_time=configs.main_config.max_time)
+    @backoff.on_exception(backoff.expo, configs.cfg.excepts, max_time=configs.cfg.max_time)
     @cache.cache_name
     async def get_persons_films(self, person_id: str) -> Person | None:
         data = await self._get_persons_films_from_elastic(person_id)
@@ -24,7 +24,7 @@ class PersonService:
             return None
         return data
 
-    @backoff.on_exception(backoff.expo, configs.main_config.excepts, max_time=configs.main_config.max_time)
+    @backoff.on_exception(backoff.expo, configs.cfg.excepts, max_time=configs.cfg.max_time)
     @cache.cache_id
     async def get_by_id(self, person_id: str) -> Person | None:
         data = await self._get_person_from_elastic(person_id)
@@ -32,7 +32,7 @@ class PersonService:
             return None
         return data
 
-    @backoff.on_exception(backoff.expo, configs.main_config.excepts, max_time=configs.main_config.max_time)
+    @backoff.on_exception(backoff.expo, configs.cfg.excepts, max_time=configs.cfg.max_time)
     @cache.cache_search
     async def get_by_search(self,
                             q: str | None = None,

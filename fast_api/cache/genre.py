@@ -23,7 +23,7 @@ class GenreCache(Cache):
                 await c.set(
                     key,
                     orjson.dumps([genre.json(by_alias=True) for genre in result]),
-                    configs.cache_config.cache_exp)
+                    configs.cache.exp)
                 return result
         return wrapper
 
@@ -44,7 +44,7 @@ class GenreCache(Cache):
                 await c.set(
                     key,
                     result.json(),
-                    configs.cache_config.cache_exp)
+                    configs.cache.exp)
                 return result
         return wrapper
 

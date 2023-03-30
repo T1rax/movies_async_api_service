@@ -20,8 +20,8 @@ app = FastAPI(
 
 @app.on_event('startup')
 async def startup():
-    redis.redis = Redis(host=configs.cache_config.cache_host, port=configs.cache_config.cache_port)
-    elastic.es = AsyncElasticsearch(hosts=[f'{configs.es_config.elastic_host}:{configs.es_config.elastic_port}'])
+    redis.redis = Redis(host=configs.cache.host, port=configs.cache.port)
+    elastic.es = AsyncElasticsearch(hosts=[f'{configs.elastic.host}:{configs.elastic.port}'])
 
 
 @app.on_event('shutdown')
