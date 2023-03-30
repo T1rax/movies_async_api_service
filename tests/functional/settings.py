@@ -2,6 +2,10 @@ from pydantic import BaseSettings, Field
 
 from testdata.es_index import settings, mappings_movies, mappings_genres, mappings_persons
 
+class ServiceNotReady(Exception):
+    "Raised when service is not awailable yet"
+    pass
+
 
 class TestSettings(BaseSettings):
     
