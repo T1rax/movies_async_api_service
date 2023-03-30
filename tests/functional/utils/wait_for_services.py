@@ -22,14 +22,14 @@ def wait_for_es():
 
 
 @backoff.on_exception(backoff.expo, ServiceNotReady, jitter=backoff.full_jitter, max_time=180)
-def wait_for_redis():
-    redis_client = Redis(host=test_settings.redis_host, port=test_settings.redis_port)
+def wait_for_cache():
+    cache_client = Redis(host=test_settings.cache_host, port=test_settings.cache_port)
     
-    if not redis_client.ping():
+    if not cache_client.ping():
         logging.info('Redis not awailable yet, wait for next try')
         raise ServiceNotReady('Redis not awailable yet')
 
 
 if __name__ == '__main__':
     wait_for_es()
-    wait_for_redis()
+    wait_for_cache()

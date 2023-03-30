@@ -26,7 +26,7 @@ from settings import test_settings
     ]
 )
 @pytest.mark.asyncio
-async def test_film_id(test_config, film_id, expected_answer, prepare_film_es, redis_clear_cache, aiohttp_helper):
+async def test_film_id(test_config, film_id, expected_answer, prepare_film_es, cache_clear_cache, aiohttp_helper):
 
     # 1. Генерируем данные и загружаем данные в ES (запускается 1 раз для всех тестов)
     try:
@@ -36,9 +36,9 @@ async def test_film_id(test_config, film_id, expected_answer, prepare_film_es, r
     
     # 2. Чистим кеш редиса (запускается 1 раз для всех тестов)
     try:
-        await redis_clear_cache
+        await cache_clear_cache
     except RuntimeError:
-        redis_clear_cache
+        cache_clear_cache
 
     # 3. Запрашиваем данные из ES по API
     status, array_length, body, headers = await aiohttp_helper.make_get_request(test_config.service_url, '/api/v1/films/'+film_id)
@@ -59,7 +59,7 @@ async def test_film_id(test_config, film_id, expected_answer, prepare_film_es, r
     ]
 )
 @pytest.mark.asyncio
-async def test_film_redis_cache(test_config, film_id, expected_answer, prepare_film_es, redis_clear_cache, aiohttp_helper, redis_helper):
+async def test_film_cache(test_config, film_id, expected_answer, prepare_film_es, cache_clear_cache, aiohttp_helper, cache_helper):
 
     # 1. Генерируем данные и загружаем данные в ES (запускается 1 раз для всех тестов)
     try:
@@ -69,22 +69,22 @@ async def test_film_redis_cache(test_config, film_id, expected_answer, prepare_f
     
     # 2. Чистим кеш редиса (запускается 1 раз для всех тестов)
     try:
-        await redis_clear_cache
+        await cache_clear_cache
     except RuntimeError:
-        redis_clear_cache    
+        cache_clear_cache    
 
     # 3. Запрашиваем данные из ES по API
     status, array_length, body, headers = await aiohttp_helper.make_get_request(test_config.service_url, '/api/v1/films/'+film_id)
 
     # 4. Проверяем наличие ключа в редисе
-    redis_cache = await redis_helper.get_value('get_by_id___'+film_id+'___None___None___None___None___None___None___None')
-    redis_cache = json.loads(redis_cache)
-    redis_cache['id'] = redis_cache.pop('uuid')
+    cache_value = await cache_helper.get_value('get_by_id___'+film_id+'___None___None___None___None___None___None___None')
+    cache_value = json.loads(cache_value)
+    cache_value['id'] = cache_value.pop('uuid')
 
     # 5. Проверяем ответ 
     assert status == expected_answer['status']
     assert body.get('id') == expected_answer['id'] 
-    assert redis_cache == body
+    assert cache_value == body
 
 
 @pytest.mark.parametrize(
@@ -118,7 +118,7 @@ async def test_film_redis_cache(test_config, film_id, expected_answer, prepare_f
     ]
 )
 @pytest.mark.asyncio
-async def test_film_all_films(test_config, parameters, expected_answer, prepare_film_es, redis_clear_cache, aiohttp_helper):
+async def test_film_all_films(test_config, parameters, expected_answer, prepare_film_es, cache_clear_cache, aiohttp_helper):
 
     # 1. Генерируем данные и загружаем данные в ES (запускается 1 раз для всех тестов)
     try:
@@ -128,9 +128,9 @@ async def test_film_all_films(test_config, parameters, expected_answer, prepare_
     
     # 2. Чистим кеш редиса (запускается 1 раз для всех тестов)
     try:
-        await redis_clear_cache
+        await cache_clear_cache
     except RuntimeError:
-        redis_clear_cache
+        cache_clear_cache
 
     # 3. Запрашиваем данные из ES по API
     status, array_length, body, headers = await aiohttp_helper.make_get_request(test_config.service_url, '/api/v1/films/', parameters)
@@ -156,7 +156,7 @@ async def test_film_all_films(test_config, parameters, expected_answer, prepare_
     ]
 )
 @pytest.mark.asyncio
-async def test_film_sort(test_config, parameters, expected_answer, prepare_film_es, redis_clear_cache, aiohttp_helper):
+async def test_film_sort(test_config, parameters, expected_answer, prepare_film_es, cache_clear_cache, aiohttp_helper):
 
     # 1. Генерируем данные и загружаем данные в ES (запускается 1 раз для всех тестов)
     try:
@@ -166,9 +166,9 @@ async def test_film_sort(test_config, parameters, expected_answer, prepare_film_
     
     # 2. Чистим кеш редиса (запускается 1 раз для всех тестов)
     try:
-        await redis_clear_cache
+        await cache_clear_cache
     except RuntimeError:
-        redis_clear_cache
+        cache_clear_cache
 
     # 3. Запрашиваем данные из ES по API
     status, array_length, body, headers = await aiohttp_helper.make_get_request(test_config.service_url, '/api/v1/films/', parameters)
@@ -246,7 +246,7 @@ async def test_film_sort(test_config, parameters, expected_answer, prepare_film_
     ]
 )
 @pytest.mark.asyncio
-async def test_film_data_validation(test_config, parameters, expected_answer, prepare_film_es, redis_clear_cache, aiohttp_helper):
+async def test_film_data_validation(test_config, parameters, expected_answer, prepare_film_es, cache_clear_cache, aiohttp_helper):
 
     # 1. Генерируем данные и загружаем данные в ES (запускается 1 раз для всех тестов)
     try:
@@ -256,9 +256,9 @@ async def test_film_data_validation(test_config, parameters, expected_answer, pr
     
     # 2. Чистим кеш редиса (запускается 1 раз для всех тестов)
     try:
-        await redis_clear_cache
+        await cache_clear_cache
     except RuntimeError:
-        redis_clear_cache
+        cache_clear_cache
 
     # 3. Запрашиваем данные из ES по API
     status, array_length, body, headers = await aiohttp_helper.make_get_request(test_config.service_url, '/api/v1/films/', parameters)

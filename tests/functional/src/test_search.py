@@ -21,7 +21,7 @@ from settings import test_settings
     ]
 )
 @pytest.mark.asyncio
-async def test_films_search(query_data, expected_answer, prepare_film_es, redis_clear_cache, aiohttp_helper):
+async def test_films_search(query_data, expected_answer, prepare_film_es, cache_clear_cache, aiohttp_helper):
 
     # 1. Генерируем данные и загружаем данные в ES (запускается 1 раз для всех тестов)
     try:
@@ -31,9 +31,9 @@ async def test_films_search(query_data, expected_answer, prepare_film_es, redis_
     
     # 2. Чистим кеш редиса (запускается 1 раз для всех тестов)
     try:
-        await redis_clear_cache
+        await cache_clear_cache
     except RuntimeError:
-        redis_clear_cache
+        cache_clear_cache
 
     # 3. Запрашиваем данные из ES по API
     status, array_length, body, headers = await aiohttp_helper.make_get_request(test_settings.service_url, '/api/v1/films/search', query_data)
@@ -59,7 +59,7 @@ async def test_films_search(query_data, expected_answer, prepare_film_es, redis_
     ]
 )
 @pytest.mark.asyncio
-async def test_persons_search(parameters, expected_answer, prepare_person_es, redis_clear_cache, aiohttp_helper):
+async def test_persons_search(parameters, expected_answer, prepare_person_es, cache_clear_cache, aiohttp_helper):
     # 1. Генерируем данные и загружаем данные в ES (запускается 1 раз для всех тестов)
     try:
         await prepare_person_es
@@ -68,9 +68,9 @@ async def test_persons_search(parameters, expected_answer, prepare_person_es, re
 
     # 2. Чистим кеш редиса (запускается 1 раз для всех тестов)
     try:
-        await redis_clear_cache
+        await cache_clear_cache
     except RuntimeError:
-        redis_clear_cache
+        cache_clear_cache
 
     # 3. Запрашиваем данные из ES по API
     status, array_length, body, headers = await aiohttp_helper.make_get_request(test_settings.service_url,
@@ -92,7 +92,7 @@ async def test_persons_search(parameters, expected_answer, prepare_person_es, re
     ]
 )
 @pytest.mark.asyncio
-async def test_persons_search_redis_cache(parameters, expected_answer, prepare_person_es, redis_clear_cache, aiohttp_helper, redis_helper):
+async def test_persons_search_cache(parameters, expected_answer, prepare_person_es, cache_clear_cache, aiohttp_helper, cache_helper):
     # 1. Генерируем данные и загружаем данные в ES (запускается 1 раз для всех тестов)
     try:
         await prepare_person_es
@@ -101,19 +101,19 @@ async def test_persons_search_redis_cache(parameters, expected_answer, prepare_p
 
     # 2. Чистим кеш редиса (запускается 1 раз для всех тестов)
     try:
-        await redis_clear_cache
+        await cache_clear_cache
     except RuntimeError:
-        redis_clear_cache
+        cache_clear_cache
 
     # 3. Запрашиваем данные из ES по API
     status, array_length, body, headers = await aiohttp_helper.make_get_request(test_settings.service_url,
                                                                                 '/api/v1/persons/search', parameters)
 
     # 4. Проверяем наличие в редисе
-    redis_cache = await redis_helper.get_value(
+    cache_value = await cache_helper.get_value(
         'get_by_search___None___None___None___'+parameters.get('query')+'___None___'+str(parameters.get('page_number'))+'___'+str(parameters.get('page_size'))+'___None')
-    redis_cache = len(json.loads(redis_cache))
+    cache_value = len(json.loads(cache_value))
 
     # 5. Проверяем ответ
     assert status == expected_answer['status']
-    assert redis_cache == expected_answer['length']
+    assert cache_value == expected_answer['length']

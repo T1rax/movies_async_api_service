@@ -1,21 +1,21 @@
 import backoff
 from functools import lru_cache
 from elasticsearch import AsyncElasticsearch, NotFoundError
-from redis.asyncio import Redis
 from fastapi import Depends
 
 from db.elastic import get_elastic
 from db.redis import get_redis
 from models.film import Film
 from services.config import FilmHelper
+from cache.cache import AsyncCacheStorage
 from cache.film import cache
 from core.config import configs
 
 
 class FilmService(FilmHelper):
-    def __init__(self, redis: Redis, elastic: AsyncElasticsearch):
+    def __init__(self, cache_cli: AsyncCacheStorage, elastic: AsyncElasticsearch):
         FilmHelper.__init__(self)
-        self.redis = redis
+        self.cache_cli = cache_cli
         self.elastic = elastic
 
     @backoff.on_exception(backoff.expo, configs.main_config.EXCEPTS, max_time=configs.main_config.MAX_TIME)
@@ -77,7 +77,7 @@ class FilmService(FilmHelper):
 
 @lru_cache()
 def get_film_service(
-        redis: Redis = Depends(get_redis),
+        cache_cli: AsyncCacheStorage = Depends(get_redis),
         elastic: AsyncElasticsearch = Depends(get_elastic)
 ) -> FilmService:
-    return FilmService(redis, elastic)
+    return FilmService(cache_cli, elastic)

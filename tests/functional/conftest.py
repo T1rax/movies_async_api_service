@@ -6,5 +6,5 @@ sys.path.insert(0, '/home/seo/proj/sprint_5/movies_async_api_service/tests/funct
 
 pytest_plugins = ('fixtures.elasticsearch',
                   'fixtures.asyncio',
-                  'fixtures.redis',
+                  'fixtures.cache',
                   'fixtures.aiohttp')
