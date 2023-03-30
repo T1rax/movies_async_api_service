@@ -24,7 +24,7 @@ class GenreCache(RedisCache):
                 await r.set(
                     key,
                     orjson.dumps([genre.json(by_alias=True) for genre in result]),
-                    configs.redis_config.REDIS_CACHE)
+                    configs.redis_config.redis_cache)
                 return result
         return wrapper
 
@@ -45,7 +45,7 @@ class GenreCache(RedisCache):
                 await r.set(
                     key,
                     result.json(),
-                    configs.redis_config.REDIS_CACHE)
+                    configs.redis_config.redis_cache)
                 return result
         return wrapper
 

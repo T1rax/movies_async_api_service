@@ -24,7 +24,7 @@ class PersonCache(RedisCache):
                 await r.set(
                     key,
                     orjson.dumps([item.json(by_alias=True) for item in result]),
-                    configs.redis_config.REDIS_CACHE)
+                    configs.redis_config.redis_cache)
                 return result
         return wrapper
 
@@ -44,7 +44,7 @@ class PersonCache(RedisCache):
                 await r.set(
                     key,
                     result.json(),
-                    configs.redis_config.REDIS_CACHE)
+                    configs.redis_config.redis_cache)
                 return result
         return wrapper
 
@@ -64,7 +64,7 @@ class PersonCache(RedisCache):
                 await r.set(
                     key,
                     orjson.dumps([item.json() for item in result]),
-                    configs.redis_config.REDIS_CACHE)
+                    configs.redis_config.redis_cache)
                 return result
         return wrapper
 
