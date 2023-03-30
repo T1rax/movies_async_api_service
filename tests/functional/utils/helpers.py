@@ -45,16 +45,16 @@ class Elastic_helper:
             raise NoResultsEsception
         
 
-class Redis_helper:
-    def __init__(self, redis_client, test_config):
-        self.redis_client = redis_client
+class Cache_helper:
+    def __init__(self, cache_client, test_config):
+        self.cache_client = cache_client
 
     
     async def clear_cache(self):
-        await self.redis_client.flushall()
+        await self.cache_client.flushall()
         
     async def get_value(self, key):
-        return await self.redis_client.get(key)
+        return await self.cache_client.get(key)
     
 
 class Aiohttp_helper:

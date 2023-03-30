@@ -2,6 +2,10 @@ from pydantic import BaseSettings, Field
 
 from testdata.es_index import settings, mappings_movies, mappings_genres, mappings_persons
 
+class ServiceNotReady(Exception):
+    "Raised when service is not awailable yet"
+    pass
+
 
 class TestSettings(BaseSettings):
     
@@ -12,8 +16,8 @@ class TestSettings(BaseSettings):
     es_url: str = Field('http://127.0.0.1:9200', env='ELASTIC_ADDRESS')
     es_id_field: str = Field('id', env='ELASTIC_ID_FIELD')
 
-    redis_host: str = Field('127.0.0.1', env='REDIS_HOST')
-    redis_port: str = Field('6379', env='REDIS_PORT')
+    cache_host: str = Field('127.0.0.1', env='CACHE_HOST')
+    cache_port: str = Field('6379', env='CACHE_PORT')
     service_url: str =Field('http://127.0.0.1:8000', env='SERVICE_ADDRESS')
 
 

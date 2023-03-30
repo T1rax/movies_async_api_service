@@ -1,6 +1,6 @@
 import pytest
-import logging
 import json
+from http import HTTPStatus
 
 from settings import test_settings
 
@@ -11,22 +11,22 @@ from settings import test_settings
         (
                 test_settings,
                 'person-id-1',
-                {'status': 200, 'id': 'person-id-1'}
+                {'status': HTTPStatus.OK, 'id': 'person-id-1'}
         ),
         (
                 test_settings,
                 'person-id-222',
-                {'status': 404, 'id': None}
+                {'status': HTTPStatus.NOT_FOUND, 'id': None}
         ),
         (
                 test_settings,
                 '111222333',
-                {'status': 404, 'id': None}
+                {'status': HTTPStatus.NOT_FOUND, 'id': None}
         )
     ]
 )
 @pytest.mark.asyncio
-async def test_person_id(test_config, person_id, expected_answer, prepare_person_es, redis_clear_cache, aiohttp_helper):
+async def test_person_id(test_config, person_id, expected_answer, prepare_person_es, cache_clear_cache, aiohttp_helper):
     # 1. Генерируем данные и загружаем данные в ES (запускается 1 раз для всех тестов)
     try:
         await prepare_person_es
@@ -35,9 +35,9 @@ async def test_person_id(test_config, person_id, expected_answer, prepare_person
 
     # 2. Чистим кеш редиса (запускается 1 раз для всех тестов)
     try:
-        await redis_clear_cache
+        await cache_clear_cache
     except RuntimeError:
-        redis_clear_cache
+        cache_clear_cache
 
     # 3. Запрашиваем данные из ES по API
     status, array_length, body, headers = await aiohttp_helper.make_get_request(test_config.service_url,
@@ -54,13 +54,13 @@ async def test_person_id(test_config, person_id, expected_answer, prepare_person
         (
                 test_settings,
                 'person-id-1',
-                {'status': 200, 'id': 'person-id-1'}
+                {'status': HTTPStatus.OK, 'id': 'person-id-1'}
         )
     ]
 )
 @pytest.mark.asyncio
-async def test_person_id_redis_cache(test_config, person_id, expected_answer, prepare_person_es, redis_clear_cache,
-                                    aiohttp_helper, redis_helper):
+async def test_person_id_cache(test_config, person_id, expected_answer, prepare_person_es, cache_clear_cache,
+                                    aiohttp_helper, cache_helper):
     # 1. Генерируем данные и загружаем данные в ES (запускается 1 раз для всех тестов)
     try:
         await prepare_person_es
@@ -69,22 +69,22 @@ async def test_person_id_redis_cache(test_config, person_id, expected_answer, pr
 
     # 2. Чистим кеш редиса (запускается 1 раз для всех тестов)
     try:
-        await redis_clear_cache
+        await cache_clear_cache
     except RuntimeError:
-        redis_clear_cache
+        cache_clear_cache
 
     # 3. Запрашиваем данные из ES по API
     status, array_length, body, headers = await aiohttp_helper.make_get_request(test_config.service_url,
                                                                                 '/api/v1/persons/' + person_id)
 
     # 4. Проверяем наличие ключа в редисе
-    redis_cache = await redis_helper.get_value('get_by_id___None___None___' + person_id + '___None___None___None___None___None')
-    redis_cache = json.loads(redis_cache)
-    redis_cache['id'] = redis_cache.pop('uuid')
+    cache_value = await cache_helper.get_value('get_by_id___None___None___' + person_id + '___None___None___None___None___None')
+    cache_value = json.loads(cache_value)
+    cache_value['id'] = cache_value.pop('uuid')
 
     # 5. Проверяем ответ
     assert status == expected_answer['status']
-    assert redis_cache['id'] == expected_answer['id']
+    assert cache_value['id'] == expected_answer['id']
 
 
 @pytest.mark.parametrize(
@@ -93,12 +93,12 @@ async def test_person_id_redis_cache(test_config, person_id, expected_answer, pr
         (
                 test_settings,
                 'person-id-1',
-                {'status': 200, 'length': 2}
+                {'status': HTTPStatus.OK, 'length': 2}
         )
     ]
 )
 @pytest.mark.asyncio
-async def test_person_films(test_config, person_id, expected_answer, prepare_person_es, redis_clear_cache, aiohttp_helper):
+async def test_person_films(test_config, person_id, expected_answer, prepare_person_es, cache_clear_cache, aiohttp_helper):
     # 1. Генерируем данные и загружаем данные в ES (запускается 1 раз для всех тестов)
     try:
         await prepare_person_es
@@ -107,9 +107,9 @@ async def test_person_films(test_config, person_id, expected_answer, prepare_per
 
     # 2. Чистим кеш редиса (запускается 1 раз для всех тестов)
     try:
-        await redis_clear_cache
+        await cache_clear_cache
     except RuntimeError:
-        redis_clear_cache
+        cache_clear_cache
 
     # 3. Запрашиваем данные из ES по API
     status, array_length, body, headers = await aiohttp_helper.make_get_request(test_config.service_url,
@@ -126,13 +126,13 @@ async def test_person_films(test_config, person_id, expected_answer, prepare_per
         (
                 test_settings,
                 'person-id-1',
-                {'status': 200, 'length': 2}
+                {'status': HTTPStatus.OK, 'length': 2}
         )
     ]
 )
 @pytest.mark.asyncio
-async def test_person_films_redis_cache(test_config, person_id, expected_answer, prepare_person_es, redis_clear_cache,
-                                    aiohttp_helper, redis_helper):
+async def test_person_films_cache(test_config, person_id, expected_answer, prepare_person_es, cache_clear_cache,
+                                    aiohttp_helper, cache_helper):
     # 1. Генерируем данные и загружаем данные в ES (запускается 1 раз для всех тестов)
     try:
         await prepare_person_es
@@ -141,18 +141,18 @@ async def test_person_films_redis_cache(test_config, person_id, expected_answer,
 
     # 2. Чистим кеш редиса (запускается 1 раз для всех тестов)
     try:
-        await redis_clear_cache
+        await cache_clear_cache
     except RuntimeError:
-        redis_clear_cache
+        cache_clear_cache
 
     # 3. Запрашиваем данные из ES по API
     status, array_length, body, headers = await aiohttp_helper.make_get_request(test_config.service_url,
                                                                                 '/api/v1/persons/' + person_id + '/film')
 
     # 4. Проверяем наличие в редисе
-    redis_cache = await redis_helper.get_value('get_persons_films___None___None___' + person_id + '___None___None___None___None___None')
-    redis_cache = len(json.loads(redis_cache))
+    cache_value = await cache_helper.get_value('get_persons_films___None___None___' + person_id + '___None___None___None___None___None')
+    cache_value = len(json.loads(cache_value))
 
     # 5. Проверяем ответ
     assert status == expected_answer['status']
-    assert redis_cache == expected_answer['length']
+    assert cache_value == expected_answer['length']

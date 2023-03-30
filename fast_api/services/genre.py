@@ -1,19 +1,19 @@
 import backoff
 from functools import lru_cache
 from elasticsearch import AsyncElasticsearch, NotFoundError
-from redis.asyncio import Redis
 from fastapi import Depends
 
 from db.elastic import get_elastic
 from db.redis import get_redis
+from cache.cache import AsyncCacheStorage
 from cache.genre import cache
 from models.genre import Genre
 from core.config import configs
 
 
 class GenreService:
-    def __init__(self, redis: Redis, elastic: AsyncElasticsearch):
-        self.redis = redis
+    def __init__(self, cache_cli: AsyncCacheStorage, elastic: AsyncElasticsearch):
+        self.cache_cli = cache_cli
         self.elastic = elastic
 
     @backoff.on_exception(backoff.expo, configs.main_config.EXCEPTS, max_time=configs.main_config.MAX_TIME)
@@ -52,7 +52,7 @@ class GenreService:
 
 @lru_cache()
 def get_genre_service(
-        redis: Redis = Depends(get_redis),
+        cache_cli: AsyncCacheStorage = Depends(get_redis),
         elastic: AsyncElasticsearch = Depends(get_elastic),
 ) -> GenreService:
-    return GenreService(redis, elastic)
+    return GenreService(cache_cli, elastic)

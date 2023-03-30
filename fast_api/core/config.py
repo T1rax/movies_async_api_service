@@ -16,11 +16,11 @@ class MainConfig(BaseSettings):
         env_file_encoding = 'utf-8'
 
 
-class RedisConfig(BaseSettings):
+class CacheConfig(BaseSettings):
     """ Redis settings """
-    REDIS_HOST: str = Field('127.0.0.1', env='REDIS_HOST')
-    REDIS_PORT: int = Field(6379, env='REDIS_PORT')
-    REDIS_CACHE: int = Field(60 * 5, env='REDIS_CACHE')  # 5 minutes
+    CACHE_HOST: str = Field('127.0.0.1', env='CACHE_HOST')
+    CACHE_PORT: int = Field(6379, env='CACHE_PORT')
+    CACHE_EXP: int = Field(60 * 5, env='CACHE_EXP')  # 5 minutes
 
     class Config:
         env_file = './../.env'
@@ -38,7 +38,7 @@ class ElasticConfig(BaseSettings):
 
 
 class BaseConfig(BaseSettings):
-    redis_config: RedisConfig = RedisConfig()
+    cache_config: CacheConfig = CacheConfig()
     es_config: ElasticConfig = ElasticConfig()
     main_config: MainConfig = MainConfig()
 

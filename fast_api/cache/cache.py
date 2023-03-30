@@ -1,7 +1,21 @@
 import abc
 
 
-class RedisCache:
+class AsyncCacheStorage(abc.ABC):
+    @abc.abstractmethod
+    async def get(self, key: str, **kwargs):
+        pass
+
+    @abc.abstractmethod
+    async def set(self, key: str, value: str, ex: int, **kwargs):
+        pass
+
+    @abc.abstractmethod
+    async def exists(self, *keys: str, **kwargs):
+        pass
+
+
+class Cache(abc.ABC):
     @abc.abstractmethod
     def cache_name(self):
         pass

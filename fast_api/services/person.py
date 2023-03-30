@@ -1,19 +1,19 @@
 import backoff
 from functools import lru_cache
 from elasticsearch import AsyncElasticsearch, NotFoundError
-from redis.asyncio import Redis
 from fastapi import Depends
 
 from db.elastic import get_elastic
 from db.redis import get_redis
 from models.person import Person, PersonFilmList
+from cache.cache import AsyncCacheStorage
 from cache.person import cache
 from core.config import configs
 
 
 class PersonService:
-    def __init__(self, redis: Redis, elastic: AsyncElasticsearch):
-        self.redis = redis
+    def __init__(self, cache_cli: AsyncCacheStorage, elastic: AsyncElasticsearch):
+        self.cache_cli = cache_cli
         self.elastic = elastic
 
     @backoff.on_exception(backoff.expo, configs.main_config.EXCEPTS, max_time=configs.main_config.MAX_TIME)
@@ -79,7 +79,7 @@ class PersonService:
 
 @lru_cache()
 def get_person_service(
-        redis: Redis = Depends(get_redis),
+        cache_cli: AsyncCacheStorage = Depends(get_redis),
         elastic: AsyncElasticsearch = Depends(get_elastic),
 ) -> PersonService:
-    return PersonService(redis, elastic)
+    return PersonService(cache_cli, elastic)
