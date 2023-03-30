@@ -2,6 +2,7 @@ from http import HTTPStatus
 from fastapi import APIRouter, Depends, HTTPException, Query
 from models.person import Person, PersonFilmList
 from services.person import PersonService, get_person_service
+from core.pagination import PaginatedParams
 
 
 router = APIRouter()
@@ -11,13 +12,12 @@ router = APIRouter()
             response_model=list[Person],
             description="Search for the person")
 async def person_search(query: str | None = None,
-                        page_number: int = Query(default=1, gt=0, le=100),
-                        page_size: int = Query(default=50, gt=0, le=100),
+                        pagination_data: PaginatedParams = Depends(PaginatedParams),
                         person_service: PersonService = Depends(get_person_service)
                         ) -> Person:
     persons = await person_service.get_by_search(q=query,
-                                                 page_number=page_number,
-                                                 page_size=page_size)
+                                                 page_number=pagination_data.page_number,
+                                                 page_size=pagination_data.page_size)
     if not persons:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
                             detail=f'Persons not found')

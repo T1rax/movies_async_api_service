@@ -47,7 +47,7 @@ LOGGING = {
     'loggers': {
         '': {
             'handlers': LOG_DEFAULT_HANDLERS,
-            'level': configs.main_config.LOG_LEVEL,
+            'level': configs.cfg.log_level,
         },
         'gunicorn.error': {
             'level': 'INFO',
